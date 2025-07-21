@@ -207,7 +207,7 @@
     transform: translateX(2px);
 }
 
-/* Submenu Styles - Right-side overlay approach */
+/* Submenu Styles - SIMPLE AND BULLETPROOF */
 .ac-wp-ham-submenu {
     list-style: none;
     margin: 0;
@@ -215,37 +215,28 @@
     position: absolute;
     top: 0;
     left: 100%;
-    margin-left: 10px; /* Add some spacing from parent */
+    margin-left: 10px;
     min-width: 220px;
-    background: #ffffff; /* Solid white background */
+    background: #ffffff;
     border-radius: 8px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25); /* Stronger shadow */
-    border: 1px solid #e0e0e0; /* Visible border */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+    border: 1px solid #e0e0e0;
     z-index: 10001;
-    opacity: 0;
-    visibility: hidden;
-    transform: translateX(10px); /* Fade in from the left (positive value) */
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    pointer-events: none;
-    overflow: visible; /* Ensure submenu content is visible */
+    /* DEFAULT STATE: COMPLETELY HIDDEN */
+    display: none;
 }
 
+/* ACTIVE STATE: COMPLETELY VISIBLE - BULLETPROOF */
 .ac-wp-ham-submenu.ac-wp-ham-submenu-active {
-    opacity: 1 !important;
-    visibility: visible !important;
-    transform: translateX(0) !important;
-    pointer-events: auto !important;
+    display: block !important;
 }
 
 /* Position submenus to the left if they would overflow */
 .ac-wp-ham-submenu.ac-wp-ham-submenu-left {
     left: auto;
     right: 100%;
-    transform: translateX(-10px); /* Fade in from the right when positioned left */
-}
-
-.ac-wp-ham-submenu.ac-wp-ham-submenu-left.ac-wp-ham-submenu-active {
-    transform: translateX(0) !important;
+    margin-left: 0;
+    margin-right: 10px;
 }
 
 .ac-wp-ham-submenu a {
