@@ -221,6 +221,36 @@
         openSubmenu(submenu) {
             this.currentSubmenu = submenu;
             
+            // Hide main menu items
+            const mainMenuItems = this.menu.querySelectorAll('.ac-wp-ham-nav-list > li:not(.menu-item-has-children)');
+            const parentMenuItem = submenu.closest('.menu-item-has-children');
+            const otherParentItems = this.menu.querySelectorAll('.ac-wp-ham-nav-list > li.menu-item-has-children:not(.ac-wp-ham-current-parent)');
+            
+            // Mark the current parent
+            parentMenuItem.classList.add('ac-wp-ham-current-parent');
+            
+            // Hide other items with animation
+            gsap.to([...mainMenuItems, ...otherParentItems], {
+                duration: 0.2,
+                opacity: 0,
+                x: -20,
+                ease: "power2.in"
+            });
+            
+            // Add back button to submenu if it doesn't exist
+            if (!submenu.querySelector('.ac-wp-ham-back-button')) {
+                const backButton = document.createElement('li');
+                backButton.className = 'menu-item ac-wp-ham-back-item';
+                backButton.innerHTML = '<a href="#" class="ac-wp-ham-back-button"><span class="ac-wp-ham-back-arrow">‹</span> Back</a>';
+                submenu.insertBefore(backButton, submenu.firstChild);
+                
+                // Add back button event listener
+                backButton.querySelector('.ac-wp-ham-back-button').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.closeSubmenu(submenu);
+                });
+            }
+            
             // Add active class first to set display: block via CSS
             submenu.classList.add('ac-wp-ham-submenu-active');
             
@@ -228,8 +258,8 @@
             gsap.fromTo(submenu, {
                 opacity: 0,
                 visibility: 'hidden',
-                x: -20,
-                rotationY: -10,
+                x: 20,
+                rotationY: 10,
                 scale: 0.95
             }, {
                 duration: 0.3,
@@ -238,24 +268,43 @@
                 x: 0,
                 rotationY: 0,
                 scale: 1,
-                ease: "power2.out"
+                ease: "power2.out",
+                delay: 0.1
             });
 
             this.updateFocusableElements();
         }
 
         closeSubmenu(submenu) {
+            // Animate submenu out
             gsap.to(submenu, {
                 duration: 0.2,
                 opacity: 0,
                 visibility: 'hidden',
-                x: -20,
-                rotationY: -10,
+                x: 20,
+                rotationY: 10,
                 scale: 0.95,
                 ease: "power2.in",
                 onComplete: () => {
                     submenu.classList.remove('ac-wp-ham-submenu-active');
                 }
+            });
+
+            // Show main menu items again
+            const mainMenuItems = this.menu.querySelectorAll('.ac-wp-ham-nav-list > li:not(.menu-item-has-children)');
+            const parentMenuItem = submenu.closest('.menu-item-has-children');
+            const otherParentItems = this.menu.querySelectorAll('.ac-wp-ham-nav-list > li.menu-item-has-children:not(.ac-wp-ham-current-parent)');
+            
+            // Remove current parent marker
+            parentMenuItem.classList.remove('ac-wp-ham-current-parent');
+            
+            // Show other items with animation
+            gsap.to([...mainMenuItems, ...otherParentItems], {
+                duration: 0.3,
+                opacity: 1,
+                x: 0,
+                ease: "power2.out",
+                delay: 0.1
             });
 
             if (this.currentSubmenu === submenu) {

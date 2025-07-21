@@ -213,6 +213,7 @@ class AC_WP_Ham_Menu_Walker extends Walker_Nav_Menu {
     function start_lvl(&$output, $depth = 0, $args = null) {
         $indent = str_repeat("\t", $depth);
         $output .= "\n$indent<ul class=\"ac-wp-ham-submenu ac-wp-ham-submenu-level-$depth\">\n";
+        // Back button will be added dynamically by JavaScript
     }
     
     function end_lvl(&$output, $depth = 0, $args = null) {

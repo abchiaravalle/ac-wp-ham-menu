@@ -139,6 +139,11 @@
     overflow: visible; /* Ensure submenus can extend outside parent */
 }
 
+.ac-wp-ham-nav-list li.ac-wp-ham-current-parent > a {
+    background-color: rgba(85, 34, 221, 0.1);
+    color: #5522dd;
+}
+
 .ac-wp-ham-nav-list a {
     display: flex;
     align-items: center;
@@ -181,7 +186,7 @@
 .ac-wp-ham-submenu {
     position: absolute;
     top: 0;
-    left: 100%;
+    left: 0;
     width: 100%;
     background: rgba(255, 255, 255, 0.98);
     border-radius: 12px;
@@ -203,6 +208,26 @@
     padding-left: 30px;
     font-size: 15px;
     font-weight: 400;
+}
+
+/* Back Button Styles */
+.ac-wp-ham-back-item {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.ac-wp-ham-back-button {
+    padding-left: 20px !important;
+    font-weight: 600 !important;
+    color: #5522dd !important;
+}
+
+.ac-wp-ham-back-button:hover {
+    background-color: rgba(85, 34, 221, 0.15) !important;
+}
+
+.ac-wp-ham-back-arrow {
+    font-size: 18px;
+    margin-right: 8px;
 }
 
 /* Responsive Adjustments */
