@@ -37,6 +37,7 @@
             this.isOpen = false;
             this.currentSubmenu = null;
             this.focusableElements = [];
+            this.submenuOperationInProgress = false;
             
             this.init();
         }
@@ -59,7 +60,7 @@
 
             // Close menu when clicking outside
             document.addEventListener('click', (e) => {
-                if (this.isOpen && !this.container.contains(e.target)) {
+                if (this.isOpen && !this.container.contains(e.target) && !this.submenuOperationInProgress) {
                     this.closeMenu();
                 }
             });
@@ -160,7 +161,12 @@
                 trigger.addEventListener('click', (e) => {
                     e.preventDefault();
                     e.stopPropagation();
+                    this.submenuOperationInProgress = true;
                     this.handleSubmenuClick(trigger);
+                    // Reset the flag after a short delay
+                    setTimeout(() => {
+                        this.submenuOperationInProgress = false;
+                    }, 100);
                 });
             });
         }
