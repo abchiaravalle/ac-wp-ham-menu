@@ -66,13 +66,13 @@
     <div class="demo-container">
         <div class="demo-header">
             <h1>AC WP Hamburger Menu</h1>
-            <p>iOS-style floating menu with GSAP animations</p>
+            <p>iOS-style floating menu with right-side overlay submenus</p>
         </div>
         
         <div class="demo-grid">
             <div class="demo-section">
-                <h3>Basic Menu</h3>
-                <p>A simple hamburger menu that appears inline with your content.</p>
+                <h3>Right-Side Overlay Submenus</h3>
+                <p>Submenus now open to the right as overlays, keeping the main menu visible. Click or hover on items with arrows to see submenus.</p>
                 
                 <!-- This is how the WordPress shortcode would render -->
                 <div class="ac-wp-ham-container" id="ac-wp-ham-menu-demo1">
@@ -142,8 +142,8 @@
             </div>
             
             <div class="demo-section">
-                <h3>Right Edge Positioning</h3>
-                <p>When near the viewport edge, the menu automatically adjusts its position.</p>
+                <h3>Smart Edge Positioning</h3>
+                <p>When near the viewport edge, submenus automatically position to the left instead of right to stay visible.</p>
                 
                 <div style="text-align: right;">
                     <div class="ac-wp-ham-container ac-wp-ham-near-right-edge" id="ac-wp-ham-menu-demo2">
@@ -159,16 +159,27 @@
                             <div class="ac-wp-ham-menu-inner">
                                 <ul class="ac-wp-ham-nav-list">
                                     <li class="menu-item">
-                                        <a href="#dashboard">Dashboard</a>
+                                        <a href="#dashboard">📊 Dashboard</a>
+                                    </li>
+                                    <li class="menu-item menu-item-has-children">
+                                        <a href="#admin">⚙️ Admin <span class="ac-wp-ham-submenu-arrow" aria-hidden="true">›</span></a>
+                                        <ul class="ac-wp-ham-submenu ac-wp-ham-submenu-level-0">
+                                            <li class="menu-item">
+                                                <a href="#users">👥 Users</a>
+                                            </li>
+                                            <li class="menu-item">
+                                                <a href="#settings">⚙️ Settings</a>
+                                            </li>
+                                            <li class="menu-item">
+                                                <a href="#permissions">🔐 Permissions</a>
+                                            </li>
+                                        </ul>
                                     </li>
                                     <li class="menu-item">
-                                        <a href="#settings">Settings</a>
+                                        <a href="#profile">👤 Profile</a>
                                     </li>
                                     <li class="menu-item">
-                                        <a href="#profile">Profile</a>
-                                    </li>
-                                    <li class="menu-item">
-                                        <a href="#logout">Logout</a>
+                                        <a href="#logout">🚪 Logout</a>
                                     </li>
                                 </ul>
                             </div>
@@ -179,18 +190,23 @@
         </div>
         
         <div style="margin-top: 40px; padding: 20px; background: #f8f9fa; border-radius: 8px;">
-            <h3>Features Demonstrated:</h3>
+            <h3>New Features Demonstrated:</h3>
             <ul>
-                <li>✨ Smooth GSAP animations with staggered menu items</li>
-                <li>🎯 Smart viewport positioning</li>
-                <li>📱 Responsive design that works on all devices</li>
-                <li>♿ Full keyboard navigation (try Tab, Arrow keys, ESC)</li>
-                <li>🎨 iOS-style blur effects and modern design</li>
-                <li>🔧 Nested submenu support</li>
+                <li>🎯 <strong>Right-side overlay submenus</strong> - No more content replacement!</li>
+                <li>🖱️ <strong>Click or hover</strong> to open submenus</li>
+                <li>📱 <strong>Smart positioning</strong> - Auto-adjusts if near viewport edge</li>
+                <li>🔧 <strong>Unlimited nesting</strong> - Deep submenu hierarchies supported</li>
+                <li>✨ <strong>Smooth GSAP animations</strong> with staggered submenu items</li>
+                <li>🎨 <strong>Modern blur effects</strong> and backdrop styling</li>
+                <li>♿ <strong>Full keyboard navigation</strong> (Tab, Arrow keys, ESC)</li>
+                <li>📱 <strong>Responsive design</strong> that works on all devices</li>
             </ul>
             
-            <h4>Keyboard Navigation:</h4>
-            <p><strong>Tab:</strong> Focus hamburger button | <strong>Enter/Space:</strong> Open menu | <strong>Arrow Keys:</strong> Navigate items | <strong>ESC:</strong> Close menu</p>
+            <h4>How to Use:</h4>
+            <p><strong>Click hamburger:</strong> Open menu | <strong>Click/Hover submenu items:</strong> Show submenus to the right | <strong>ESC:</strong> Close menu</p>
+            
+            <h4>✅ Fixed Issues:</h4>
+            <p><strong>No more submenu closing problems!</strong> The new right-side overlay approach eliminates all document click handler conflicts.</p>
         </div>
     </div>
     
