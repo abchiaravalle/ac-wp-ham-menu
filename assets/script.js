@@ -176,6 +176,14 @@
             const submenuTriggers = this.container.querySelectorAll('.menu-item-has-children > a');
             console.log('🔧 setupSubmenuHandling - Found triggers:', submenuTriggers.length);
             
+            // ENSURE CLEAN INITIAL STATE - all submenus start hidden
+            const allSubmenus = this.container.querySelectorAll('.ac-wp-ham-submenu');
+            allSubmenus.forEach(submenu => {
+                submenu.classList.remove('ac-wp-ham-submenu-active');
+                submenu.parentElement.classList.remove('ac-wp-ham-submenu-open');
+            });
+            console.log('🧹 Cleaned initial state for', allSubmenus.length, 'submenus');
+            
             submenuTriggers.forEach((trigger, index) => {
                 const parentItem = trigger.parentElement;
                 const submenu = parentItem.querySelector('.ac-wp-ham-submenu');
@@ -183,6 +191,7 @@
                 console.log(`🔧 Trigger ${index}:`, trigger.textContent.trim(), 'has submenu:', !!submenu);
                 
                 if (submenu) {
+                    console.log(`🔍 Initial submenu state - classes: "${submenu.className}", display: ${getComputedStyle(submenu).display}`);
                     // Click to toggle submenu
                     trigger.addEventListener('click', (e) => {
                         e.preventDefault();
@@ -193,18 +202,18 @@
                         this.toggleSubmenu(parentItem, submenu);
                     });
                     
-                    // Hover to show submenu (optional - can be disabled)
-                    parentItem.addEventListener('mouseenter', () => {
-                        if (this.isOpen) {
-                            this.showSubmenu(parentItem, submenu);
-                        }
-                    });
+                    // DISABLED HOVER - was causing conflicts with click
+                    // parentItem.addEventListener('mouseenter', () => {
+                    //     if (this.isOpen) {
+                    //         this.showSubmenu(parentItem, submenu);
+                    //     }
+                    // });
                     
-                    parentItem.addEventListener('mouseleave', () => {
-                        if (this.isOpen) {
-                            this.hideSubmenu(parentItem, submenu);
-                        }
-                    });
+                    // parentItem.addEventListener('mouseleave', () => {
+                    //     if (this.isOpen) {
+                    //         this.hideSubmenu(parentItem, submenu);
+                    //     }
+                    // });
                 }
             });
         }
