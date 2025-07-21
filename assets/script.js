@@ -242,7 +242,8 @@
             parentItem.classList.add('ac-wp-ham-submenu-open');
             submenu.classList.add('ac-wp-ham-submenu-active');
             
-            console.log('🎯 SIMPLE SHOW - Submenu display:', getComputedStyle(submenu).display);
+            const isMobile = window.innerWidth <= 768;
+            console.log(`🎯 SIMPLE SHOW (${isMobile ? 'mobile inline' : 'desktop overlay'}) - Submenu display:`, getComputedStyle(submenu).display);
             
             // Animate submenu items after a tiny delay to ensure display is applied
             setTimeout(() => {
@@ -276,6 +277,11 @@
         }
 
         positionSubmenu(parentItem, submenu) {
+            // Skip positioning on mobile - submenus are inline
+            if (window.innerWidth <= 768) {
+                return;
+            }
+            
             // Reset positioning classes
             submenu.classList.remove('ac-wp-ham-submenu-left');
             
@@ -319,11 +325,13 @@
         closeOtherSubmenus(exceptSubmenu) {
             // Close all open submenus except the specified one
             const openSubmenus = this.container.querySelectorAll('.ac-wp-ham-submenu-active');
+            const isMobile = window.innerWidth <= 768;
+            
             openSubmenus.forEach(submenu => {
                 if (submenu !== exceptSubmenu) {
                     const parentItem = submenu.closest('.menu-item-has-children');
                     if (parentItem) {
-                        console.log('🔄 Closing other submenu:', parentItem.querySelector('a').textContent.trim());
+                        console.log(`🔄 Closing other submenu (${isMobile ? 'mobile' : 'desktop'}):`, parentItem.querySelector('a').textContent.trim());
                         this.hideSubmenu(parentItem, submenu);
                     }
                 }
