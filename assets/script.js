@@ -37,6 +37,7 @@
             this.isOpen = false;
             this.currentSubmenu = null;
             this.focusableElements = [];
+            this.hoverTimeout = null;
             
             this.init();
         }
@@ -159,7 +160,24 @@
             submenuTriggers.forEach(trigger => {
                 trigger.addEventListener('click', (e) => {
                     e.preventDefault();
+                    e.stopPropagation();
                     this.handleSubmenuClick(trigger);
+                });
+
+                // Add hover support for better UX
+                trigger.addEventListener('mouseenter', () => {
+                    const submenu = trigger.parentElement.querySelector('.ac-wp-ham-submenu');
+                    if (submenu && !submenu.classList.contains('ac-wp-ham-submenu-active')) {
+                        // Small delay to prevent accidental triggers
+                        clearTimeout(this.hoverTimeout);
+                        this.hoverTimeout = setTimeout(() => {
+                            this.handleSubmenuClick(trigger);
+                        }, 200);
+                    }
+                });
+
+                trigger.parentElement.addEventListener('mouseleave', () => {
+                    clearTimeout(this.hoverTimeout);
                 });
             });
         }
@@ -167,9 +185,18 @@
         handleSubmenuClick(trigger) {
             const submenu = trigger.parentElement.querySelector('.ac-wp-ham-submenu');
             if (submenu) {
+                // If this submenu is already open, close it
+                if (this.currentSubmenu === submenu && submenu.classList.contains('ac-wp-ham-submenu-active')) {
+                    this.closeSubmenu(submenu);
+                    return;
+                }
+                
+                // Close any other open submenu first
                 if (this.currentSubmenu && this.currentSubmenu !== submenu) {
                     this.closeSubmenu(this.currentSubmenu);
                 }
+                
+                // Open the new submenu
                 this.openSubmenu(submenu);
             }
         }
@@ -197,18 +224,20 @@
             // Add active class first to set display: block via CSS
             submenu.classList.add('ac-wp-ham-submenu-active');
             
-            // Animate submenu entrance
-            gsap.set(submenu, { 
+            // Set initial state and animate submenu entrance
+            gsap.fromTo(submenu, {
                 opacity: 0,
+                visibility: 'hidden',
                 x: -20,
-                rotationY: -10
-            });
-            
-            gsap.to(submenu, {
+                rotationY: -10,
+                scale: 0.95
+            }, {
                 duration: 0.3,
                 opacity: 1,
+                visibility: 'visible',
                 x: 0,
                 rotationY: 0,
+                scale: 1,
                 ease: "power2.out"
             });
 
@@ -219,8 +248,10 @@
             gsap.to(submenu, {
                 duration: 0.2,
                 opacity: 0,
+                visibility: 'hidden',
                 x: -20,
                 rotationY: -10,
+                scale: 0.95,
                 ease: "power2.in",
                 onComplete: () => {
                     submenu.classList.remove('ac-wp-ham-submenu-active');

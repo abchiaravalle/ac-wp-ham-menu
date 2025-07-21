@@ -119,6 +119,7 @@
     max-height: 70vh;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
+    position: relative; /* Ensure submenus position correctly */
 }
 
 /* Navigation List */
@@ -132,6 +133,10 @@
     margin: 0;
     padding: 0;
     position: relative;
+}
+
+.ac-wp-ham-nav-list li.menu-item-has-children {
+    overflow: visible; /* Ensure submenus can extend outside parent */
 }
 
 .ac-wp-ham-nav-list a {
@@ -185,15 +190,13 @@
     display: none;
     opacity: 0;
     visibility: hidden;
-    transform: translateX(-20px);
     z-index: 10001;
+    transition: none; /* Disable CSS transitions to avoid conflicts with GSAP */
 }
 
 .ac-wp-ham-submenu.ac-wp-ham-submenu-active {
     display: block;
-    opacity: 1;
-    visibility: visible;
-    transform: translateX(0);
+    /* Let GSAP handle opacity, visibility, and transforms */
 }
 
 .ac-wp-ham-submenu a {
