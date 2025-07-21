@@ -120,6 +120,7 @@
     max-height: 70vh;
     overflow-y: auto;
     overflow-x: visible; /* Allow submenus to extend horizontally */
+    overflow: visible !important; /* CRITICAL FIX - TOP PRIORITY FOR SUBMENU VISIBILITY */
     -webkit-overflow-scrolling: touch;
     position: relative; /* Ensure submenus position correctly */
 }

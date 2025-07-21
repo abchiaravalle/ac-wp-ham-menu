@@ -226,12 +226,15 @@
                 console.log('⬇️ Hiding submenu');
                 this.hideSubmenu(parentItem, submenu);
             } else {
-                console.log('⬆️ Showing submenu');
+                console.log('⬆️ Showing submenu (will close others first)');
                 this.showSubmenu(parentItem, submenu);
             }
         }
 
         showSubmenu(parentItem, submenu) {
+            // CLOSE OTHER OPEN SUBMENUS FIRST (except this one)
+            this.closeOtherSubmenus(submenu);
+            
             // Check if submenu would overflow viewport and position accordingly
             this.positionSubmenu(parentItem, submenu);
             
@@ -310,6 +313,20 @@
             openSubmenus.forEach(submenu => {
                 const parentItem = submenu.closest('.menu-item-has-children');
                 this.hideSubmenu(parentItem, submenu);
+            });
+        }
+
+        closeOtherSubmenus(exceptSubmenu) {
+            // Close all open submenus except the specified one
+            const openSubmenus = this.container.querySelectorAll('.ac-wp-ham-submenu-active');
+            openSubmenus.forEach(submenu => {
+                if (submenu !== exceptSubmenu) {
+                    const parentItem = submenu.closest('.menu-item-has-children');
+                    if (parentItem) {
+                        console.log('🔄 Closing other submenu:', parentItem.querySelector('a').textContent.trim());
+                        this.hideSubmenu(parentItem, submenu);
+                    }
+                }
             });
         }
 
