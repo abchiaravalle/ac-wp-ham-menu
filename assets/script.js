@@ -57,9 +57,14 @@
                 this.toggleMenu();
             });
 
-            // Close menu when clicking outside - use a more targeted approach
-            document.addEventListener('click', (e) => {
+            // Set up click outside handler with proper binding
+            this.documentClickHandler = (e) => {
                 if (!this.isOpen) return;
+                
+                // Don't close if a submenu click is in progress
+                if (this._submenuClickInProgress) {
+                    return;
+                }
                 
                 // Don't close if clicking inside the container
                 if (this.container.contains(e.target)) {
@@ -84,22 +89,27 @@
                     // Clicking outside the container - close menu
                     this.closeMenu();
                 }
-            });
+            };
+
+            // Add the document click handler
+            document.addEventListener('click', this.documentClickHandler);
 
             // Close menu on escape key
-            document.addEventListener('keydown', (e) => {
+            this.escapeKeyHandler = (e) => {
                 if (e.key === 'Escape' && this.isOpen) {
                     this.closeMenu();
                     this.toggle.focus();
                 }
-            });
+            };
+            document.addEventListener('keydown', this.escapeKeyHandler);
 
             // Handle window resize
-            window.addEventListener('resize', () => {
+            this.resizeHandler = () => {
                 if (this.isOpen) {
                     this.updateViewportPosition();
                 }
-            });
+            };
+            window.addEventListener('resize', this.resizeHandler);
         }
 
         setupViewportDetection() {
@@ -182,7 +192,13 @@
                 trigger.addEventListener('click', (e) => {
                     e.preventDefault();
                     e.stopPropagation();
+                    // Add a flag to prevent document handler from running
+                    this._submenuClickInProgress = true;
                     this.handleSubmenuClick(trigger);
+                    // Clear the flag after a short delay
+                    setTimeout(() => {
+                        this._submenuClickInProgress = false;
+                    }, 10);
                 });
             });
         }
@@ -444,6 +460,19 @@
         close() {
             if (this.isOpen) {
                 this.closeMenu();
+            }
+        }
+
+        // Cleanup method to remove event listeners
+        destroy() {
+            if (this.documentClickHandler) {
+                document.removeEventListener('click', this.documentClickHandler);
+            }
+            if (this.escapeKeyHandler) {
+                document.removeEventListener('keydown', this.escapeKeyHandler);
+            }
+            if (this.resizeHandler) {
+                window.removeEventListener('resize', this.resizeHandler);
             }
         }
     }
