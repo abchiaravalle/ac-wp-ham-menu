@@ -219,11 +219,11 @@
             parentItem.classList.add('ac-wp-ham-submenu-open');
             submenu.classList.add('ac-wp-ham-submenu-active');
             
-            // Animate submenu items
+            // Animate submenu items - fade in from the left
             const submenuItems = submenu.querySelectorAll('li');
             gsap.fromTo(submenuItems, {
                 opacity: 0,
-                x: -20
+                x: 20 // Start from the left (positive value)
             }, {
                 duration: 0.3,
                 opacity: 1,
