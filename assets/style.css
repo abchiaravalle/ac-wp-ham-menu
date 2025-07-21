@@ -122,6 +122,11 @@
     position: relative; /* Ensure submenus position correctly */
 }
 
+/* Submenu mode adjustments */
+.ac-wp-ham-menu.ac-wp-ham-submenu-mode .ac-wp-ham-menu-inner {
+    padding: 8px 0;
+}
+
 /* Navigation List */
 .ac-wp-ham-nav-list {
     list-style: none;
@@ -184,47 +189,65 @@
 
 /* Submenu Styles */
 .ac-wp-ham-submenu {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    width: 100%;
-    background: rgba(255, 255, 255, 0.98);
-    border-radius: 12px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
     display: none;
-    opacity: 0;
-    visibility: hidden;
-    z-index: 10002;
-    transition: none; /* Disable CSS transitions to avoid conflicts with GSAP */
-    min-height: 100%;
+    list-style: none;
+    margin: 0;
+    padding: 0;
 }
 
 .ac-wp-ham-submenu.ac-wp-ham-submenu-active {
     display: block;
-    /* Let GSAP handle opacity, visibility, and transforms */
+}
+
+/* Hide main nav when submenu is active */
+.ac-wp-ham-menu.ac-wp-ham-submenu-mode .ac-wp-ham-nav-list {
+    display: none;
+}
+
+.ac-wp-ham-menu.ac-wp-ham-submenu-mode .ac-wp-ham-submenu-active {
+    display: block;
 }
 
 .ac-wp-ham-submenu a {
-    padding-left: 30px;
-    font-size: 15px;
-    font-weight: 400;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 20px;
+    color: #333;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.4;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.ac-wp-ham-submenu a:hover,
+.ac-wp-ham-submenu a:focus {
+    background-color: rgba(85, 34, 221, 0.1);
+    color: #5522dd;
+    outline: none;
+}
+
+.ac-wp-ham-submenu li:last-child a {
+    border-bottom: none;
 }
 
 /* Back Button Styles */
 .ac-wp-ham-back-item {
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    margin: 0;
+    padding: 0;
 }
 
 .ac-wp-ham-back-button {
-    padding-left: 20px !important;
     font-weight: 600 !important;
     color: #5522dd !important;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1) !important;
 }
 
 .ac-wp-ham-back-button:hover {
     background-color: rgba(85, 34, 221, 0.15) !important;
+    color: #5522dd !important;
 }
 
 .ac-wp-ham-back-arrow {

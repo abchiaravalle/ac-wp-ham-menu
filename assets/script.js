@@ -224,41 +224,69 @@
                 });
             }
             
-            // Add active class first to set display: block via CSS
-            submenu.classList.add('ac-wp-ham-submenu-active');
+            // Switch to submenu mode
+            this.menu.classList.add('ac-wp-ham-submenu-mode');
             
-            // Set initial state and animate submenu entrance
-            gsap.fromTo(submenu, {
+            // Animate main menu out
+            const mainNavList = this.menu.querySelector('.ac-wp-ham-nav-list');
+            gsap.to(mainNavList, {
+                duration: 0.2,
                 opacity: 0,
-                visibility: 'hidden',
-                x: 20,
-                rotationY: 10,
-                scale: 0.95
-            }, {
-                duration: 0.3,
-                opacity: 1,
-                visibility: 'visible',
-                x: 0,
-                rotationY: 0,
-                scale: 1,
-                ease: "power2.out"
+                x: -30,
+                ease: "power2.in",
+                onComplete: () => {
+                    // Show submenu
+                    submenu.classList.add('ac-wp-ham-submenu-active');
+                    
+                    // Set initial state for submenu items
+                    const submenuItems = submenu.querySelectorAll('li');
+                    gsap.set(submenuItems, {
+                        opacity: 0,
+                        x: 30
+                    });
+                    
+                    // Animate submenu in
+                    gsap.to(submenuItems, {
+                        duration: 0.3,
+                        opacity: 1,
+                        x: 0,
+                        ease: "power2.out",
+                        stagger: 0.05
+                    });
+                }
             });
 
             this.updateFocusableElements();
         }
 
         closeSubmenu(submenu) {
-            // Animate submenu out
-            gsap.to(submenu, {
+            // Animate submenu items out
+            const submenuItems = submenu.querySelectorAll('li');
+            gsap.to(submenuItems, {
                 duration: 0.2,
                 opacity: 0,
-                visibility: 'hidden',
-                x: 20,
-                rotationY: 10,
-                scale: 0.95,
+                x: 30,
                 ease: "power2.in",
+                stagger: 0.02,
                 onComplete: () => {
+                    // Hide submenu and exit submenu mode
                     submenu.classList.remove('ac-wp-ham-submenu-active');
+                    this.menu.classList.remove('ac-wp-ham-submenu-mode');
+                    
+                    // Animate main menu back in
+                    const mainNavList = this.menu.querySelector('.ac-wp-ham-nav-list');
+                    gsap.set(this.menuItems, {
+                        opacity: 0,
+                        x: -30
+                    });
+                    
+                    gsap.to(this.menuItems, {
+                        duration: 0.3,
+                        opacity: 1,
+                        x: 0,
+                        ease: "power2.out",
+                        stagger: 0.05
+                    });
                 }
             });
 
