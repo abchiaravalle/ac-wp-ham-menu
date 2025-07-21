@@ -104,7 +104,7 @@
     transform: translateY(-10px) scale(0.95);
     transform-origin: top left;
     z-index: 10000;
-    overflow: hidden;
+    overflow: visible; /* Allow submenus to extend outside */
 }
 
 .ac-wp-ham-menu.ac-wp-ham-menu-open {
@@ -118,6 +118,7 @@
     padding: 8px 0;
     max-height: 70vh;
     overflow-y: auto;
+    overflow-x: visible; /* Allow submenus to extend horizontally */
     -webkit-overflow-scrolling: touch;
     position: relative; /* Ensure submenus position correctly */
 }
@@ -147,7 +148,10 @@
 
 .ac-wp-ham-nav-list li.menu-item-has-children:hover > .ac-wp-ham-submenu,
 .ac-wp-ham-nav-list li.menu-item-has-children.ac-wp-ham-submenu-open > .ac-wp-ham-submenu {
-    display: block;
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0);
+    pointer-events: auto;
 }
 
 .ac-wp-ham-nav-list li.ac-wp-ham-submenu-open > a {
@@ -195,7 +199,6 @@
 
 /* Submenu Styles - Right-side overlay approach */
 .ac-wp-ham-submenu {
-    display: none;
     list-style: none;
     margin: 0;
     padding: 8px 0;
@@ -211,14 +214,17 @@
     border: 1px solid rgba(255, 255, 255, 0.2);
     z-index: 10001;
     opacity: 0;
+    visibility: hidden;
     transform: translateX(-10px);
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
 }
 
 .ac-wp-ham-submenu.ac-wp-ham-submenu-active {
-    display: block;
     opacity: 1;
+    visibility: visible;
     transform: translateX(0);
+    pointer-events: auto;
 }
 
 /* Position submenus to the left if they would overflow */
