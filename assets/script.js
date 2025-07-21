@@ -35,7 +35,6 @@
             this.menu = container.querySelector('.ac-wp-ham-menu');
             this.menuItems = container.querySelectorAll('.ac-wp-ham-nav-list > li');
             this.isOpen = false;
-            this.currentSubmenu = null;
             this.focusableElements = [];
             
             this.init();
@@ -57,37 +56,25 @@
                 this.toggleMenu();
             });
 
-            // Set up click outside handler with proper binding
+            // Set up click outside handler - much simpler now
             this.documentClickHandler = (e) => {
                 if (!this.isOpen) return;
                 
-                // Don't close if a submenu click is in progress
-                if (this._submenuClickInProgress) {
-                    return;
-                }
-                
-                // Don't close if clicking inside the container
-                if (this.container.contains(e.target)) {
-                    // Check if clicking on a submenu trigger or its children
-                    const clickedElement = e.target;
-                    const isSubmenuTrigger = clickedElement.closest('.menu-item-has-children > a');
-                    const isSubmenuArrow = clickedElement.classList.contains('ac-wp-ham-submenu-arrow');
-                    
-                    // Don't close menu if clicking on submenu triggers or arrows
-                    if (isSubmenuTrigger || isSubmenuArrow) {
-                        return;
-                    }
-                    
-                    // Close menu if clicking on regular menu items (not submenu triggers)
-                    const isRegularMenuItem = clickedElement.closest('.menu-item:not(.menu-item-has-children) > a');
-                    const isBackButton = clickedElement.closest('.ac-wp-ham-back-button');
-                    
-                    if (isRegularMenuItem && !isBackButton) {
-                        this.closeMenu();
-                    }
-                } else {
-                    // Clicking outside the container - close menu
+                // Close menu if clicking outside the container
+                if (!this.container.contains(e.target)) {
                     this.closeMenu();
+                } else {
+                    // Close menu if clicking on regular menu items (not submenu triggers)
+                    const clickedLink = e.target.closest('a');
+                    if (clickedLink) {
+                        const parentItem = clickedLink.closest('.menu-item');
+                        const isSubmenuTrigger = parentItem && parentItem.classList.contains('menu-item-has-children');
+                        
+                        // Close menu only if clicking regular menu items
+                        if (!isSubmenuTrigger) {
+                            this.closeMenu();
+                        }
+                    }
                 }
             };
 
@@ -189,36 +176,88 @@
             const submenuTriggers = this.container.querySelectorAll('.menu-item-has-children > a');
             
             submenuTriggers.forEach(trigger => {
-                trigger.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    // Add a flag to prevent document handler from running
-                    this._submenuClickInProgress = true;
-                    this.handleSubmenuClick(trigger);
-                    // Clear the flag after a short delay
-                    setTimeout(() => {
-                        this._submenuClickInProgress = false;
-                    }, 10);
-                });
+                const parentItem = trigger.parentElement;
+                const submenu = parentItem.querySelector('.ac-wp-ham-submenu');
+                
+                if (submenu) {
+                    // Click to toggle submenu
+                    trigger.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        this.toggleSubmenu(parentItem, submenu);
+                    });
+                    
+                    // Hover to show submenu (optional - can be disabled)
+                    parentItem.addEventListener('mouseenter', () => {
+                        if (this.isOpen) {
+                            this.showSubmenu(parentItem, submenu);
+                        }
+                    });
+                    
+                    parentItem.addEventListener('mouseleave', () => {
+                        if (this.isOpen) {
+                            this.hideSubmenu(parentItem, submenu);
+                        }
+                    });
+                }
             });
         }
 
-        handleSubmenuClick(trigger) {
-            const submenu = trigger.parentElement.querySelector('.ac-wp-ham-submenu');
-            if (submenu) {
-                // If this submenu is already open, close it
-                if (this.currentSubmenu === submenu && submenu.classList.contains('ac-wp-ham-submenu-active')) {
-                    this.closeSubmenu(submenu);
-                    return;
-                }
-                
-                // Close any other open submenu first
-                if (this.currentSubmenu && this.currentSubmenu !== submenu) {
-                    this.closeSubmenu(this.currentSubmenu);
-                }
-                
-                // Open the new submenu
-                this.openSubmenu(submenu);
+        toggleSubmenu(parentItem, submenu) {
+            if (submenu.classList.contains('ac-wp-ham-submenu-active')) {
+                this.hideSubmenu(parentItem, submenu);
+            } else {
+                this.showSubmenu(parentItem, submenu);
+            }
+        }
+
+        showSubmenu(parentItem, submenu) {
+            // Check if submenu would overflow viewport and position accordingly
+            this.positionSubmenu(parentItem, submenu);
+            
+            // Show submenu
+            parentItem.classList.add('ac-wp-ham-submenu-open');
+            submenu.classList.add('ac-wp-ham-submenu-active');
+            
+            // Animate submenu items
+            const submenuItems = submenu.querySelectorAll('li');
+            gsap.fromTo(submenuItems, {
+                opacity: 0,
+                x: -20
+            }, {
+                duration: 0.3,
+                opacity: 1,
+                x: 0,
+                stagger: 0.05,
+                ease: "power2.out"
+            });
+        }
+
+        hideSubmenu(parentItem, submenu) {
+            // Hide submenu
+            parentItem.classList.remove('ac-wp-ham-submenu-open');
+            submenu.classList.remove('ac-wp-ham-submenu-active');
+            
+            // Also hide any nested submenus
+            const nestedSubmenus = submenu.querySelectorAll('.ac-wp-ham-submenu');
+            nestedSubmenus.forEach(nested => {
+                nested.classList.remove('ac-wp-ham-submenu-active');
+                nested.parentElement.classList.remove('ac-wp-ham-submenu-open');
+            });
+        }
+
+        positionSubmenu(parentItem, submenu) {
+            // Reset positioning classes
+            submenu.classList.remove('ac-wp-ham-submenu-left');
+            
+            // Get viewport dimensions
+            const viewportWidth = window.innerWidth;
+            const menuRect = this.menu.getBoundingClientRect();
+            const submenuWidth = 200; // Approximate submenu width
+            
+            // Check if submenu would overflow right edge
+            if (menuRect.right + submenuWidth > viewportWidth - 20) {
+                submenu.classList.add('ac-wp-ham-submenu-left');
             }
         }
 
@@ -239,114 +278,18 @@
             }
         }
 
-        openSubmenu(submenu) {
-            this.currentSubmenu = submenu;
-            
-            // Mark the current parent
-            const parentMenuItem = submenu.closest('.menu-item-has-children');
-            parentMenuItem.classList.add('ac-wp-ham-current-parent');
-            
-            // Add back button to submenu if it doesn't exist
-            if (!submenu.querySelector('.ac-wp-ham-back-button')) {
-                const backButton = document.createElement('li');
-                backButton.className = 'menu-item ac-wp-ham-back-item';
-                backButton.innerHTML = '<a href="#" class="ac-wp-ham-back-button"><span class="ac-wp-ham-back-arrow">‹</span> Back</a>';
-                submenu.insertBefore(backButton, submenu.firstChild);
-                
-                // Add back button event listener
-                const backLink = backButton.querySelector('.ac-wp-ham-back-button');
-                backLink.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    this.closeSubmenu(submenu);
-                });
-            }
-            
-            // Switch to submenu mode
-            this.menu.classList.add('ac-wp-ham-submenu-mode');
-            
-            // Animate main menu out
-            const mainNavList = this.menu.querySelector('.ac-wp-ham-nav-list');
-            gsap.to(mainNavList, {
-                duration: 0.2,
-                opacity: 0,
-                x: -30,
-                ease: "power2.in",
-                onComplete: () => {
-                    // Show submenu
-                    submenu.classList.add('ac-wp-ham-submenu-active');
-                    
-                    // Set initial state for submenu items
-                    const submenuItems = submenu.querySelectorAll('li');
-                    gsap.set(submenuItems, {
-                        opacity: 0,
-                        x: 30
-                    });
-                    
-                    // Animate submenu in
-                    gsap.to(submenuItems, {
-                        duration: 0.3,
-                        opacity: 1,
-                        x: 0,
-                        ease: "power2.out",
-                        stagger: 0.05
-                    });
-                }
+        closeAllSubmenus() {
+            // Close all open submenus
+            const openSubmenus = this.container.querySelectorAll('.ac-wp-ham-submenu-active');
+            openSubmenus.forEach(submenu => {
+                const parentItem = submenu.closest('.menu-item-has-children');
+                this.hideSubmenu(parentItem, submenu);
             });
-
-            this.updateFocusableElements();
-        }
-
-        closeSubmenu(submenu) {
-            // Animate submenu items out
-            const submenuItems = submenu.querySelectorAll('li');
-            gsap.to(submenuItems, {
-                duration: 0.2,
-                opacity: 0,
-                x: 30,
-                ease: "power2.in",
-                stagger: 0.02,
-                onComplete: () => {
-                    // Hide submenu and exit submenu mode
-                    submenu.classList.remove('ac-wp-ham-submenu-active');
-                    this.menu.classList.remove('ac-wp-ham-submenu-mode');
-                    
-                    // Animate main menu back in
-                    const mainNavList = this.menu.querySelector('.ac-wp-ham-nav-list');
-                    gsap.set(this.menuItems, {
-                        opacity: 0,
-                        x: -30
-                    });
-                    
-                    gsap.to(this.menuItems, {
-                        duration: 0.3,
-                        opacity: 1,
-                        x: 0,
-                        ease: "power2.out",
-                        stagger: 0.05
-                    });
-                }
-            });
-
-            // Remove current parent marker
-            const parentMenuItem = submenu.closest('.menu-item-has-children');
-            parentMenuItem.classList.remove('ac-wp-ham-current-parent');
-
-            if (this.currentSubmenu === submenu) {
-                this.currentSubmenu = null;
-            }
-            
-            this.updateFocusableElements();
         }
 
         updateFocusableElements() {
-            // Get all focusable elements in the currently visible menu
-            let selector = '.ac-wp-ham-nav-list > li > a';
-            if (this.currentSubmenu && this.currentSubmenu.classList.contains('ac-wp-ham-submenu-active')) {
-                selector = '.ac-wp-ham-submenu-active a';
-            }
-            
-            this.focusableElements = Array.from(this.menu.querySelectorAll(selector));
+            // Get all focusable elements in the menu (including submenus)
+            this.focusableElements = Array.from(this.menu.querySelectorAll('a'));
         }
 
         toggleMenu() {
@@ -394,10 +337,8 @@
             this.toggle.setAttribute('aria-expanded', 'false');
             this.menu.setAttribute('aria-hidden', 'true');
 
-            // Close any open submenus
-            if (this.currentSubmenu) {
-                this.closeSubmenu(this.currentSubmenu);
-            }
+            // Close all open submenus
+            this.closeAllSubmenus();
 
             // Animate menu items out
             this.animateMenuItems('out', () => {

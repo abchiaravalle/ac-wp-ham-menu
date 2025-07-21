@@ -141,10 +141,16 @@
 }
 
 .ac-wp-ham-nav-list li.menu-item-has-children {
+    position: relative; /* Required for absolute positioned submenus */
     overflow: visible; /* Ensure submenus can extend outside parent */
 }
 
-.ac-wp-ham-nav-list li.ac-wp-ham-current-parent > a {
+.ac-wp-ham-nav-list li.menu-item-has-children:hover > .ac-wp-ham-submenu,
+.ac-wp-ham-nav-list li.menu-item-has-children.ac-wp-ham-submenu-open > .ac-wp-ham-submenu {
+    display: block;
+}
+
+.ac-wp-ham-nav-list li.ac-wp-ham-submenu-open > a {
     background-color: rgba(85, 34, 221, 0.1);
     color: #5522dd;
 }
@@ -187,25 +193,43 @@
     transform: translateX(2px);
 }
 
-/* Submenu Styles */
+/* Submenu Styles - Right-side overlay approach */
 .ac-wp-ham-submenu {
     display: none;
     list-style: none;
     margin: 0;
-    padding: 0;
+    padding: 8px 0;
+    position: absolute;
+    top: 0;
+    left: 100%;
+    min-width: 200px;
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 8px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    z-index: 10001;
+    opacity: 0;
+    transform: translateX(-10px);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .ac-wp-ham-submenu.ac-wp-ham-submenu-active {
     display: block;
+    opacity: 1;
+    transform: translateX(0);
 }
 
-/* Hide main nav when submenu is active */
-.ac-wp-ham-menu.ac-wp-ham-submenu-mode .ac-wp-ham-nav-list {
-    display: none;
+/* Position submenus to the left if they would overflow */
+.ac-wp-ham-submenu.ac-wp-ham-submenu-left {
+    left: auto;
+    right: 100%;
+    transform: translateX(10px);
 }
 
-.ac-wp-ham-menu.ac-wp-ham-submenu-mode .ac-wp-ham-submenu-active {
-    display: block;
+.ac-wp-ham-submenu.ac-wp-ham-submenu-left.ac-wp-ham-submenu-active {
+    transform: translateX(0);
 }
 
 .ac-wp-ham-submenu a {
@@ -233,26 +257,19 @@
     border-bottom: none;
 }
 
-/* Back Button Styles */
-.ac-wp-ham-back-item {
-    margin: 0;
-    padding: 0;
+/* Nested submenu positioning */
+.ac-wp-ham-submenu .menu-item-has-children {
+    position: relative;
 }
 
-.ac-wp-ham-back-button {
-    font-weight: 600 !important;
-    color: #5522dd !important;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1) !important;
+.ac-wp-ham-submenu .ac-wp-ham-submenu {
+    top: 0;
+    left: 100%;
 }
 
-.ac-wp-ham-back-button:hover {
-    background-color: rgba(85, 34, 221, 0.15) !important;
-    color: #5522dd !important;
-}
-
-.ac-wp-ham-back-arrow {
-    font-size: 18px;
-    margin-right: 8px;
+.ac-wp-ham-submenu .ac-wp-ham-submenu.ac-wp-ham-submenu-left {
+    left: auto;
+    right: 100%;
 }
 
 /* Responsive Adjustments */
