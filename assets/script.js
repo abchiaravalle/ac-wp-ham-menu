@@ -184,8 +184,6 @@
                     trigger.addEventListener('click', (e) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        console.log('🖱️ Submenu trigger clicked!', trigger.textContent.trim());
-                        console.log('🎯 Menu is open:', this.isOpen);
                         this.toggleSubmenu(parentItem, submenu);
                     });
                     
@@ -206,21 +204,14 @@
         }
 
         toggleSubmenu(parentItem, submenu) {
-            console.log('🔄 toggleSubmenu called', parentItem, submenu);
-            console.log('🔍 Submenu has active class:', submenu.classList.contains('ac-wp-ham-submenu-active'));
-            
             if (submenu.classList.contains('ac-wp-ham-submenu-active')) {
-                console.log('⬇️ Hiding submenu');
                 this.hideSubmenu(parentItem, submenu);
             } else {
-                console.log('⬆️ Showing submenu');
                 this.showSubmenu(parentItem, submenu);
             }
         }
 
         showSubmenu(parentItem, submenu) {
-            console.log('🔧 showSubmenu called', parentItem, submenu);
-            
             // Check if submenu would overflow viewport and position accordingly
             this.positionSubmenu(parentItem, submenu);
             
@@ -228,12 +219,8 @@
             parentItem.classList.add('ac-wp-ham-submenu-open');
             submenu.classList.add('ac-wp-ham-submenu-active');
             
-            console.log('🎯 Classes added - Parent:', parentItem.className, 'Submenu:', submenu.className);
-            
             // Animate submenu items - fade in from the left
             const submenuItems = submenu.querySelectorAll('li');
-            console.log('📝 Animating', submenuItems.length, 'submenu items');
-            
             gsap.fromTo(submenuItems, {
                 opacity: 0,
                 x: 20 // Start from the left (positive value)
