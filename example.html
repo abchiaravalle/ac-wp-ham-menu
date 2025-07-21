@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AC WP Hamburger Menu - Demo</title>
+    <link rel="stylesheet" href="assets/style.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            margin: 0;
+            padding: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .demo-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+        }
+        
+        .demo-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .demo-header h1 {
+            color: #333;
+            margin: 0 0 10px 0;
+        }
+        
+        .demo-header p {
+            color: #666;
+            margin: 0;
+        }
+        
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            margin-top: 40px;
+        }
+        
+        .demo-section {
+            padding: 20px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+        }
+        
+        .demo-section h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        
+        .demo-section p {
+            color: #666;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <div class="demo-header">
+            <h1>AC WP Hamburger Menu</h1>
+            <p>iOS-style floating menu with GSAP animations</p>
+        </div>
+        
+        <div class="demo-grid">
+            <div class="demo-section">
+                <h3>Basic Menu</h3>
+                <p>A simple hamburger menu that appears inline with your content.</p>
+                
+                <!-- This is how the WordPress shortcode would render -->
+                <div class="ac-wp-ham-container" id="ac-wp-ham-menu-demo1">
+                    <button class="ac-wp-ham-toggle" aria-label="Toggle Menu" aria-expanded="false">
+                        <span class="ac-wp-ham-icon">
+                            <span class="ac-wp-ham-line"></span>
+                            <span class="ac-wp-ham-line"></span>
+                            <span class="ac-wp-ham-line"></span>
+                        </span>
+                    </button>
+                    
+                    <nav class="ac-wp-ham-menu" role="navigation" aria-hidden="true">
+                        <div class="ac-wp-ham-menu-inner">
+                            <ul class="ac-wp-ham-nav-list">
+                                <li class="menu-item">
+                                    <a href="#home">Home</a>
+                                </li>
+                                <li class="menu-item">
+                                    <a href="#about">About</a>
+                                </li>
+                                <li class="menu-item menu-item-has-children">
+                                    <a href="#services">Services <span class="ac-wp-ham-submenu-arrow" aria-hidden="true">›</span></a>
+                                    <ul class="ac-wp-ham-submenu">
+                                        <li class="menu-item">
+                                            <a href="#web-design">Web Design</a>
+                                        </li>
+                                        <li class="menu-item">
+                                            <a href="#development">Development</a>
+                                        </li>
+                                        <li class="menu-item">
+                                            <a href="#consulting">Consulting</a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="menu-item">
+                                    <a href="#portfolio">Portfolio</a>
+                                </li>
+                                <li class="menu-item">
+                                    <a href="#contact">Contact</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </nav>
+                </div>
+            </div>
+            
+            <div class="demo-section">
+                <h3>Right Edge Positioning</h3>
+                <p>When near the viewport edge, the menu automatically adjusts its position.</p>
+                
+                <div style="text-align: right;">
+                    <div class="ac-wp-ham-container ac-wp-ham-near-right-edge" id="ac-wp-ham-menu-demo2">
+                        <button class="ac-wp-ham-toggle" aria-label="Toggle Menu" aria-expanded="false">
+                            <span class="ac-wp-ham-icon">
+                                <span class="ac-wp-ham-line"></span>
+                                <span class="ac-wp-ham-line"></span>
+                                <span class="ac-wp-ham-line"></span>
+                            </span>
+                        </button>
+                        
+                        <nav class="ac-wp-ham-menu" role="navigation" aria-hidden="true">
+                            <div class="ac-wp-ham-menu-inner">
+                                <ul class="ac-wp-ham-nav-list">
+                                    <li class="menu-item">
+                                        <a href="#dashboard">Dashboard</a>
+                                    </li>
+                                    <li class="menu-item">
+                                        <a href="#settings">Settings</a>
+                                    </li>
+                                    <li class="menu-item">
+                                        <a href="#profile">Profile</a>
+                                    </li>
+                                    <li class="menu-item">
+                                        <a href="#logout">Logout</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div style="margin-top: 40px; padding: 20px; background: #f8f9fa; border-radius: 8px;">
+            <h3>Features Demonstrated:</h3>
+            <ul>
+                <li>✨ Smooth GSAP animations with staggered menu items</li>
+                <li>🎯 Smart viewport positioning</li>
+                <li>📱 Responsive design that works on all devices</li>
+                <li>♿ Full keyboard navigation (try Tab, Arrow keys, ESC)</li>
+                <li>🎨 iOS-style blur effects and modern design</li>
+                <li>🔧 Nested submenu support</li>
+            </ul>
+            
+            <h4>Keyboard Navigation:</h4>
+            <p><strong>Tab:</strong> Focus hamburger button | <strong>Enter/Space:</strong> Open menu | <strong>Arrow Keys:</strong> Navigate items | <strong>ESC:</strong> Close menu</p>
+        </div>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="assets/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,301 @@
+/* AC WP Hamburger Menu Styles */
+
+.ac-wp-ham-container {
+    position: relative;
+    display: inline-block;
+    z-index: 9999;
+}
+
+/* Hamburger Toggle Button */
+.ac-wp-ham-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 12px;
+    border-radius: 8px;
+    background-color: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    outline: none;
+    position: relative;
+    z-index: 10001;
+}
+
+.ac-wp-ham-toggle:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
+    background-color: rgba(255, 255, 255, 1);
+}
+
+.ac-wp-ham-toggle:focus {
+    outline: 2px solid #007cba;
+    outline-offset: 2px;
+}
+
+.ac-wp-ham-toggle:active {
+    transform: translateY(0);
+}
+
+/* Hamburger Icon */
+.ac-wp-ham-icon {
+    display: block;
+    width: 24px;
+    height: 18px;
+    position: relative;
+}
+
+.ac-wp-ham-line {
+    display: block;
+    width: 100%;
+    height: 2px;
+    background-color: #333;
+    border-radius: 1px;
+    position: absolute;
+    left: 0;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ac-wp-ham-line:nth-child(1) {
+    top: 0;
+}
+
+.ac-wp-ham-line:nth-child(2) {
+    top: 8px;
+}
+
+.ac-wp-ham-line:nth-child(3) {
+    top: 16px;
+}
+
+/* Hamburger Animation to X */
+.ac-wp-ham-toggle[aria-expanded="true"] .ac-wp-ham-line:nth-child(1) {
+    top: 8px;
+    transform: rotate(45deg);
+}
+
+.ac-wp-ham-toggle[aria-expanded="true"] .ac-wp-ham-line:nth-child(2) {
+    opacity: 0;
+    transform: scale(0);
+}
+
+.ac-wp-ham-toggle[aria-expanded="true"] .ac-wp-ham-line:nth-child(3) {
+    top: 8px;
+    transform: rotate(-45deg);
+}
+
+/* Menu Container */
+.ac-wp-ham-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    margin-top: 8px;
+    min-width: 280px;
+    max-width: 90vw;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px) scale(0.95);
+    transform-origin: top left;
+    z-index: 10000;
+    overflow: hidden;
+}
+
+.ac-wp-ham-menu.ac-wp-ham-menu-open {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+}
+
+/* Menu Inner Container */
+.ac-wp-ham-menu-inner {
+    padding: 8px 0;
+    max-height: 70vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Navigation List */
+.ac-wp-ham-nav-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.ac-wp-ham-nav-list li {
+    margin: 0;
+    padding: 0;
+    position: relative;
+}
+
+.ac-wp-ham-nav-list a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 20px;
+    color: #333;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.4;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.ac-wp-ham-nav-list a:hover,
+.ac-wp-ham-nav-list a:focus {
+    background-color: rgba(0, 124, 186, 0.1);
+    color: #007cba;
+    outline: none;
+}
+
+.ac-wp-ham-nav-list li:last-child a {
+    border-bottom: none;
+}
+
+/* Submenu Arrow */
+.ac-wp-ham-submenu-arrow {
+    font-size: 18px;
+    color: #666;
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    margin-left: 8px;
+}
+
+.ac-wp-ham-nav-list a:hover .ac-wp-ham-submenu-arrow {
+    color: #007cba;
+    transform: translateX(2px);
+}
+
+/* Submenu Styles */
+.ac-wp-ham-submenu {
+    position: absolute;
+    top: 0;
+    left: 100%;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.98);
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(-20px);
+    z-index: 10001;
+}
+
+.ac-wp-ham-submenu.ac-wp-ham-submenu-active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0);
+}
+
+.ac-wp-ham-submenu a {
+    padding-left: 30px;
+    font-size: 15px;
+    font-weight: 400;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .ac-wp-ham-menu {
+        min-width: 260px;
+        max-width: 85vw;
+    }
+    
+    .ac-wp-ham-nav-list a {
+        padding: 14px 18px;
+        font-size: 15px;
+    }
+    
+    .ac-wp-ham-submenu a {
+        padding-left: 28px;
+    }
+}
+
+@media (max-width: 480px) {
+    .ac-wp-ham-menu {
+        min-width: 240px;
+        max-width: 80vw;
+    }
+    
+    .ac-wp-ham-nav-list a {
+        padding: 12px 16px;
+        font-size: 14px;
+    }
+    
+    .ac-wp-ham-submenu a {
+        padding-left: 26px;
+    }
+}
+
+/* Viewport Edge Detection Classes */
+.ac-wp-ham-container.ac-wp-ham-near-right-edge .ac-wp-ham-menu {
+    left: auto;
+    right: 0;
+    transform-origin: top right;
+}
+
+.ac-wp-ham-container.ac-wp-ham-near-bottom-edge .ac-wp-ham-menu {
+    top: auto;
+    bottom: 100%;
+    margin-top: 0;
+    margin-bottom: 8px;
+    transform-origin: bottom left;
+}
+
+.ac-wp-ham-container.ac-wp-ham-near-right-edge.ac-wp-ham-near-bottom-edge .ac-wp-ham-menu {
+    transform-origin: bottom right;
+}
+
+/* Animation States for GSAP */
+.ac-wp-ham-nav-list li {
+    opacity: 0;
+    transform: translateX(-20px);
+}
+
+.ac-wp-ham-nav-list li:nth-child(even) {
+    transform: translateX(20px);
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+    .ac-wp-ham-toggle,
+    .ac-wp-ham-line,
+    .ac-wp-ham-menu,
+    .ac-wp-ham-nav-list a,
+    .ac-wp-ham-submenu-arrow,
+    .ac-wp-ham-submenu {
+        transition: none !important;
+    }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .ac-wp-ham-toggle {
+        background-color: white;
+        border: 2px solid black;
+    }
+    
+    .ac-wp-ham-menu {
+        background: white;
+        border: 2px solid black;
+    }
+    
+    .ac-wp-ham-nav-list a {
+        border-bottom: 1px solid black;
+    }
+}
+
+/* Focus management for keyboard navigation */
+.ac-wp-ham-menu[aria-hidden="true"] {
+    pointer-events: none;
+}
+
+.ac-wp-ham-menu[aria-hidden="false"] {
+    pointer-events: auto;
+}
