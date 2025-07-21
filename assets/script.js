@@ -174,16 +174,22 @@
 
         setupSubmenuHandling() {
             const submenuTriggers = this.container.querySelectorAll('.menu-item-has-children > a');
+            console.log('🔧 setupSubmenuHandling - Found triggers:', submenuTriggers.length);
             
-            submenuTriggers.forEach(trigger => {
+            submenuTriggers.forEach((trigger, index) => {
                 const parentItem = trigger.parentElement;
                 const submenu = parentItem.querySelector('.ac-wp-ham-submenu');
+                
+                console.log(`🔧 Trigger ${index}:`, trigger.textContent.trim(), 'has submenu:', !!submenu);
                 
                 if (submenu) {
                     // Click to toggle submenu
                     trigger.addEventListener('click', (e) => {
                         e.preventDefault();
                         e.stopPropagation();
+                        console.log('🖱️ SUBMENU TRIGGER CLICKED!', trigger.textContent.trim());
+                        console.log('🖱️ Menu is open:', this.isOpen);
+                        console.log('🖱️ About to call toggleSubmenu...');
                         this.toggleSubmenu(parentItem, submenu);
                     });
                     
@@ -204,9 +210,14 @@
         }
 
         toggleSubmenu(parentItem, submenu) {
+            console.log('🔄 toggleSubmenu called!');
+            console.log('🔄 Submenu has active class:', submenu.classList.contains('ac-wp-ham-submenu-active'));
+            
             if (submenu.classList.contains('ac-wp-ham-submenu-active')) {
+                console.log('⬇️ Hiding submenu');
                 this.hideSubmenu(parentItem, submenu);
             } else {
+                console.log('⬆️ Showing submenu');
                 this.showSubmenu(parentItem, submenu);
             }
         }
@@ -433,6 +444,7 @@
 
     // Expose close method globally for external use
     window.ACWPHamMenu = {
+        HamburgerMenu: HamburgerMenu, // Expose class for debugging
         closeAll: function() {
             document.querySelectorAll('.ac-wp-ham-container').forEach(container => {
                 const instance = container._hamMenuInstance;
