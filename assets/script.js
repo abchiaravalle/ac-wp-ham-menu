@@ -219,6 +219,20 @@
             parentItem.classList.add('ac-wp-ham-submenu-open');
             submenu.classList.add('ac-wp-ham-submenu-active');
             
+            // Debug: Force visibility if CSS isn't working
+            console.log('🔧 showSubmenu - classes added:', submenu.className);
+            console.log('🔧 Computed styles after class add:', {
+                opacity: getComputedStyle(submenu).opacity,
+                visibility: getComputedStyle(submenu).visibility,
+                transform: getComputedStyle(submenu).transform
+            });
+            
+            // Force inline styles as backup if CSS classes aren't working
+            submenu.style.opacity = '1';
+            submenu.style.visibility = 'visible';
+            submenu.style.transform = 'translateX(0)';
+            submenu.style.pointerEvents = 'auto';
+            
             // Animate submenu items - fade in from the left
             const submenuItems = submenu.querySelectorAll('li');
             gsap.fromTo(submenuItems, {
@@ -238,11 +252,22 @@
             parentItem.classList.remove('ac-wp-ham-submenu-open');
             submenu.classList.remove('ac-wp-ham-submenu-active');
             
+            // Reset inline styles to let CSS take over
+            submenu.style.opacity = '';
+            submenu.style.visibility = '';
+            submenu.style.transform = '';
+            submenu.style.pointerEvents = '';
+            
             // Also hide any nested submenus
             const nestedSubmenus = submenu.querySelectorAll('.ac-wp-ham-submenu');
             nestedSubmenus.forEach(nested => {
                 nested.classList.remove('ac-wp-ham-submenu-active');
                 nested.parentElement.classList.remove('ac-wp-ham-submenu-open');
+                // Reset inline styles for nested submenus too
+                nested.style.opacity = '';
+                nested.style.visibility = '';
+                nested.style.transform = '';
+                nested.style.pointerEvents = '';
             });
         }
 

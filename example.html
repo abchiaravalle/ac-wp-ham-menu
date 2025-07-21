@@ -66,13 +66,13 @@
     <div class="demo-container">
         <div class="demo-header">
             <h1>AC WP Hamburger Menu</h1>
-            <p>iOS-style floating menu with fully visible right-side overlay submenus - FIXED & WORKING! ✅</p>
+            <p>iOS-style floating menu with right-side overlay submenus - FIXING CSS SPECIFICITY ISSUE 🔧</p>
         </div>
         
         <div class="demo-grid">
             <div class="demo-section">
-                <h3>✅ Fixed: Visible Right-Side Overlay Submenus</h3>
-                <p><strong>WORKING NOW!</strong> Submenus appear as solid white overlays to the right. Click items with arrows (›) to see fully visible submenus with smooth animations.</p>
+                <h3>🔧 Fixing: CSS Specificity Issue with Submenu Visibility</h3>
+                <p><strong>Issue identified:</strong> CSS classes are being added but !important declarations needed to override default hidden state. Added inline style fallback to force visibility.</p>
                 
                 <!-- This is how the WordPress shortcode would render -->
                 <div class="ac-wp-ham-container" id="ac-wp-ham-menu-demo1">
@@ -189,28 +189,26 @@
             </div>
         </div>
         
-        <div style="margin-top: 40px; padding: 20px; background: #e8f5e8; border-radius: 8px; border: 2px solid #4caf50;">
-            <h3>🎉 SUBMENU ISSUE COMPLETELY FIXED!</h3>
+        <div style="margin-top: 40px; padding: 20px; background: #fff3cd; border-radius: 8px; border: 2px solid #ffc107;">
+            <h3>🔧 FIXING CSS SPECIFICITY ISSUE</h3>
             <ul>
-                <li>✅ <strong>Solid white submenus</strong> - No more invisible/transparent issues!</li>
-                <li>✅ <strong>Right-side overlay positioning</strong> - Clear separation from main menu</li>
-                <li>✅ <strong>Click to toggle submenus</strong> - Reliable event handling</li>
-                <li>✅ <strong>Visible borders & shadows</strong> - Clear visual definition</li>
-                <li>✅ <strong>Fade in from left animation</strong> - Smooth 0.3s transitions</li>
-                <li>✅ <strong>Smart edge positioning</strong> - Auto-adjusts if near viewport edge</li>
-                <li>✅ <strong>Visible overflow everywhere</strong> - No more clipping issues</li>
-                <li>✅ <strong>Staggered item animations</strong> - Individual submenu items fade in</li>
-                <li>✅ <strong>Full keyboard navigation</strong> (Tab, Arrow keys, ESC)</li>
+                <li>🔧 <strong>CSS Specificity Issue:</strong> .ac-wp-ham-submenu-active not overriding hidden state</li>
+                <li>🔧 <strong>Added !important declarations</strong> - Force active state to show</li>
+                <li>🔧 <strong>Inline style fallback</strong> - Direct style application if CSS fails</li>
+                <li>🔧 <strong>Debug logging added</strong> - Track class application and computed styles</li>
+                <li>✅ <strong>JavaScript working correctly</strong> - Classes being added properly</li>
+                <li>✅ <strong>Positioning working</strong> - Submenus positioned to right</li>
+                <li>✅ <strong>Animations ready</strong> - GSAP animations will run once visible</li>
             </ul>
             
-            <h4>✅ How to Test the Fix:</h4>
-            <p><strong>1. Click hamburger button</strong> → Menu opens<br>
-            <strong>2. Click "Services ›" or "Products ›"</strong> → <strong>WHITE SUBMENU APPEARS!</strong><br>
-            <strong>3. See solid white overlay</strong> → Clear borders, shadows, fully visible<br>
-            <strong>4. Watch smooth animation</strong> → Items fade in from left with stagger effect</p>
+            <h4>🔧 Testing the CSS Fix:</h4>
+            <p><strong>1. Open browser console</strong> → See debug logs<br>
+            <strong>2. Click hamburger button</strong> → Menu opens<br>
+            <strong>3. Click "Services ›" or "Products ›"</strong> → Check console for style info<br>
+            <strong>4. Submenu should now be visible</strong> → Inline styles force visibility</p>
             
-            <h4>🎊 PROBLEM SOLVED!</h4>
-            <p><strong>Root cause was CSS visibility:</strong> Semi-transparent background + backdrop-filter made submenus nearly invisible. Now using solid white background with clear borders - submenus are fully visible and working perfectly!</p>
+            <h4>🔍 Root Cause Identified:</h4>
+            <p><strong>CSS specificity issue:</strong> The .ac-wp-ham-submenu-active class wasn't overriding the default hidden state (opacity: 0, visibility: hidden). Added !important declarations and inline style fallback to force visibility.</p>
         </div>
     </div>
     

@@ -231,10 +231,10 @@
 }
 
 .ac-wp-ham-submenu.ac-wp-ham-submenu-active {
-    opacity: 1;
-    visibility: visible;
-    transform: translateX(0);
-    pointer-events: auto;
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: translateX(0) !important;
+    pointer-events: auto !important;
 }
 
 /* Position submenus to the left if they would overflow */
@@ -245,7 +245,7 @@
 }
 
 .ac-wp-ham-submenu.ac-wp-ham-submenu-left.ac-wp-ham-submenu-active {
-    transform: translateX(0);
+    transform: translateX(0) !important;
 }
 
 .ac-wp-ham-submenu a {
