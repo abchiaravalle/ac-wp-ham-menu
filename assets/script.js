@@ -37,7 +37,6 @@
             this.isOpen = false;
             this.currentSubmenu = null;
             this.focusableElements = [];
-            this.submenuOperationInProgress = false;
             
             this.init();
         }
@@ -58,9 +57,31 @@
                 this.toggleMenu();
             });
 
-            // Close menu when clicking outside
+            // Close menu when clicking outside - use a more targeted approach
             document.addEventListener('click', (e) => {
-                if (this.isOpen && !this.container.contains(e.target) && !this.submenuOperationInProgress) {
+                if (!this.isOpen) return;
+                
+                // Don't close if clicking inside the container
+                if (this.container.contains(e.target)) {
+                    // Check if clicking on a submenu trigger or its children
+                    const clickedElement = e.target;
+                    const isSubmenuTrigger = clickedElement.closest('.menu-item-has-children > a');
+                    const isSubmenuArrow = clickedElement.classList.contains('ac-wp-ham-submenu-arrow');
+                    
+                    // Don't close menu if clicking on submenu triggers or arrows
+                    if (isSubmenuTrigger || isSubmenuArrow) {
+                        return;
+                    }
+                    
+                    // Close menu if clicking on regular menu items (not submenu triggers)
+                    const isRegularMenuItem = clickedElement.closest('.menu-item:not(.menu-item-has-children) > a');
+                    const isBackButton = clickedElement.closest('.ac-wp-ham-back-button');
+                    
+                    if (isRegularMenuItem && !isBackButton) {
+                        this.closeMenu();
+                    }
+                } else {
+                    // Clicking outside the container - close menu
                     this.closeMenu();
                 }
             });
@@ -161,12 +182,7 @@
                 trigger.addEventListener('click', (e) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    this.submenuOperationInProgress = true;
                     this.handleSubmenuClick(trigger);
-                    // Reset the flag after a short delay
-                    setTimeout(() => {
-                        this.submenuOperationInProgress = false;
-                    }, 100);
                 });
             });
         }
