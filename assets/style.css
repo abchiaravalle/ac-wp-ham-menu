@@ -30,7 +30,7 @@
 }
 
 .ac-wp-ham-toggle:focus {
-    outline: 2px solid #007cba;
+    outline: 2px solid #5522dd;
     outline-offset: 2px;
 }
 
@@ -50,7 +50,7 @@
     display: block;
     width: 100%;
     height: 2px;
-    background-color: #333;
+    background-color: #5522dd;
     border-radius: 1px;
     position: absolute;
     left: 0;
@@ -150,8 +150,8 @@
 
 .ac-wp-ham-nav-list a:hover,
 .ac-wp-ham-nav-list a:focus {
-    background-color: rgba(0, 124, 186, 0.1);
-    color: #007cba;
+    background-color: rgba(85, 34, 221, 0.1);
+    color: #5522dd;
     outline: none;
 }
 
@@ -168,7 +168,7 @@
 }
 
 .ac-wp-ham-nav-list a:hover .ac-wp-ham-submenu-arrow {
-    color: #007cba;
+    color: #5522dd;
     transform: translateX(2px);
 }
 
@@ -182,6 +182,7 @@
     border-radius: 12px;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.2);
+    display: none;
     opacity: 0;
     visibility: hidden;
     transform: translateX(-20px);
@@ -189,6 +190,7 @@
 }
 
 .ac-wp-ham-submenu.ac-wp-ham-submenu-active {
+    display: block;
     opacity: 1;
     visibility: visible;
     transform: translateX(0);
@@ -255,11 +257,7 @@
 /* Animation States for GSAP */
 .ac-wp-ham-nav-list li {
     opacity: 0;
-    transform: translateX(-20px);
-}
-
-.ac-wp-ham-nav-list li:nth-child(even) {
-    transform: translateX(20px);
+    transform: translateX(-30px);
 }
 
 /* Accessibility */

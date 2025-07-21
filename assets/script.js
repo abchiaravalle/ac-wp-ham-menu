@@ -194,9 +194,11 @@
         openSubmenu(submenu) {
             this.currentSubmenu = submenu;
             
+            // Add active class first to set display: block via CSS
+            submenu.classList.add('ac-wp-ham-submenu-active');
+            
             // Animate submenu entrance
             gsap.set(submenu, { 
-                display: 'block',
                 opacity: 0,
                 x: -20,
                 rotationY: -10
@@ -210,7 +212,6 @@
                 ease: "power2.out"
             });
 
-            submenu.classList.add('ac-wp-ham-submenu-active');
             this.updateFocusableElements();
         }
 
@@ -222,7 +223,6 @@
                 rotationY: -10,
                 ease: "power2.in",
                 onComplete: () => {
-                    submenu.style.display = 'none';
                     submenu.classList.remove('ac-wp-ham-submenu-active');
                 }
             });
@@ -318,14 +318,14 @@
             const items = Array.from(this.menuItems);
             
             if (direction === 'in') {
-                // Set initial states
+                // Set initial states - all items come from the left
                 gsap.set(items, {
                     opacity: 0,
-                    x: (index) => index % 2 === 0 ? -30 : 30,
-                    rotationY: (index) => index % 2 === 0 ? -15 : 15
+                    x: -30,
+                    rotationY: -15
                 });
 
-                // Animate in with stagger
+                // Animate in with faster stagger
                 gsap.to(items, {
                     duration: 0.4,
                     opacity: 1,
@@ -333,20 +333,20 @@
                     rotationY: 0,
                     ease: "power2.out",
                     stagger: {
-                        amount: 0.2,
+                        amount: 0.1,
                         from: "start"
                     }
                 });
             } else {
-                // Animate out with stagger
+                // Animate out with faster stagger - all items go to the left
                 gsap.to(items, {
                     duration: 0.25,
                     opacity: 0,
-                    x: (index) => index % 2 === 0 ? -20 : 20,
-                    rotationY: (index) => index % 2 === 0 ? -10 : 10,
+                    x: -20,
+                    rotationY: -10,
                     ease: "power2.in",
                     stagger: {
-                        amount: 0.1,
+                        amount: 0.05,
                         from: "end"
                     },
                     onComplete: callback
