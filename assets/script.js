@@ -37,7 +37,6 @@
             this.isOpen = false;
             this.currentSubmenu = null;
             this.focusableElements = [];
-            this.hoverTimeout = null;
             
             this.init();
         }
@@ -163,22 +162,6 @@
                     e.stopPropagation();
                     this.handleSubmenuClick(trigger);
                 });
-
-                // Add hover support for better UX
-                trigger.addEventListener('mouseenter', () => {
-                    const submenu = trigger.parentElement.querySelector('.ac-wp-ham-submenu');
-                    if (submenu && !submenu.classList.contains('ac-wp-ham-submenu-active')) {
-                        // Small delay to prevent accidental triggers
-                        clearTimeout(this.hoverTimeout);
-                        this.hoverTimeout = setTimeout(() => {
-                            this.handleSubmenuClick(trigger);
-                        }, 200);
-                    }
-                });
-
-                trigger.parentElement.addEventListener('mouseleave', () => {
-                    clearTimeout(this.hoverTimeout);
-                });
             });
         }
 
@@ -221,21 +204,9 @@
         openSubmenu(submenu) {
             this.currentSubmenu = submenu;
             
-            // Hide main menu items
-            const mainMenuItems = this.menu.querySelectorAll('.ac-wp-ham-nav-list > li:not(.menu-item-has-children)');
-            const parentMenuItem = submenu.closest('.menu-item-has-children');
-            const otherParentItems = this.menu.querySelectorAll('.ac-wp-ham-nav-list > li.menu-item-has-children:not(.ac-wp-ham-current-parent)');
-            
             // Mark the current parent
+            const parentMenuItem = submenu.closest('.menu-item-has-children');
             parentMenuItem.classList.add('ac-wp-ham-current-parent');
-            
-            // Hide other items with animation
-            gsap.to([...mainMenuItems, ...otherParentItems], {
-                duration: 0.2,
-                opacity: 0,
-                x: -20,
-                ease: "power2.in"
-            });
             
             // Add back button to submenu if it doesn't exist
             if (!submenu.querySelector('.ac-wp-ham-back-button')) {
@@ -245,8 +216,10 @@
                 submenu.insertBefore(backButton, submenu.firstChild);
                 
                 // Add back button event listener
-                backButton.querySelector('.ac-wp-ham-back-button').addEventListener('click', (e) => {
+                const backLink = backButton.querySelector('.ac-wp-ham-back-button');
+                backLink.addEventListener('click', (e) => {
                     e.preventDefault();
+                    e.stopPropagation();
                     this.closeSubmenu(submenu);
                 });
             }
@@ -268,8 +241,7 @@
                 x: 0,
                 rotationY: 0,
                 scale: 1,
-                ease: "power2.out",
-                delay: 0.1
+                ease: "power2.out"
             });
 
             this.updateFocusableElements();
@@ -290,22 +262,9 @@
                 }
             });
 
-            // Show main menu items again
-            const mainMenuItems = this.menu.querySelectorAll('.ac-wp-ham-nav-list > li:not(.menu-item-has-children)');
-            const parentMenuItem = submenu.closest('.menu-item-has-children');
-            const otherParentItems = this.menu.querySelectorAll('.ac-wp-ham-nav-list > li.menu-item-has-children:not(.ac-wp-ham-current-parent)');
-            
             // Remove current parent marker
+            const parentMenuItem = submenu.closest('.menu-item-has-children');
             parentMenuItem.classList.remove('ac-wp-ham-current-parent');
-            
-            // Show other items with animation
-            gsap.to([...mainMenuItems, ...otherParentItems], {
-                duration: 0.3,
-                opacity: 1,
-                x: 0,
-                ease: "power2.out",
-                delay: 0.1
-            });
 
             if (this.currentSubmenu === submenu) {
                 this.currentSubmenu = null;
@@ -317,11 +276,8 @@
         updateFocusableElements() {
             // Get all focusable elements in the currently visible menu
             let selector = '.ac-wp-ham-nav-list > li > a';
-            if (this.currentSubmenu) {
-                const submenuId = this.currentSubmenu.classList.contains('ac-wp-ham-submenu-active');
-                if (submenuId) {
-                    selector = '.ac-wp-ham-submenu-active a';
-                }
+            if (this.currentSubmenu && this.currentSubmenu.classList.contains('ac-wp-ham-submenu-active')) {
+                selector = '.ac-wp-ham-submenu-active a';
             }
             
             this.focusableElements = Array.from(this.menu.querySelectorAll(selector));
