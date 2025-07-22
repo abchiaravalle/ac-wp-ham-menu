@@ -28,6 +28,7 @@ class AC_WP_Ham_Menu {
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
         add_action('admin_menu', array($this, 'add_admin_menu'));
         add_action('admin_init', array($this, 'settings_init'));
+        add_action('admin_notices', array($this, 'admin_notices'));
         
         // Register shortcode
         add_shortcode('ac_wp_ham_menu', array($this, 'render_shortcode'));
@@ -38,41 +39,17 @@ class AC_WP_Ham_Menu {
     }
     
     public function enqueue_scripts() {
-        // Check if shortcode is being used in current post or widgets
-        global $post;
-        $should_enqueue = false;
-        
-        // Check post content
-        if (is_a($post, 'WP_Post') && has_shortcode($post->post_content, 'ac_wp_ham_menu')) {
+        // SIMPLIFIED: Always enqueue on frontend to ensure assets are available
+        // This fixes the 404 errors and ensures the menu works everywhere
+        if (!is_admin()) {
             $should_enqueue = true;
+        } else {
+            $should_enqueue = false;
         }
         
-        // Check if we're in admin or if shortcode might be in widgets/customizer
+        // Also enqueue in admin/customizer for previews
         if (is_admin() || is_customize_preview()) {
             $should_enqueue = true;
-        }
-        
-        // Always enqueue on pages where shortcode might be used dynamically
-        if (is_front_page() || is_home() || is_page()) {
-            // Check if any widgets contain the shortcode
-            $sidebars = wp_get_sidebars_widgets();
-            foreach ($sidebars as $sidebar => $widgets) {
-                if (is_array($widgets)) {
-                    foreach ($widgets as $widget) {
-                        $widget_content = get_option('widget_' . $widget);
-                        if (is_array($widget_content)) {
-                            foreach ($widget_content as $instance) {
-                                if (is_array($instance) && isset($instance['text'])) {
-                                    if (has_shortcode($instance['text'], 'ac_wp_ham_menu')) {
-                                        $should_enqueue = true;
-                                        break 3;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
         }
         
         if ($should_enqueue) {
@@ -86,21 +63,30 @@ class AC_WP_Ham_Menu {
             );
             
             // Enqueue plugin CSS
+            $css_url = $this->plugin_url . 'assets/style.css';
             wp_enqueue_style(
                 'ac-wp-ham-menu-css',
-                $this->plugin_url . 'assets/style.css',
+                $css_url,
                 array(),
                 '1.0.0'
             );
             
-            // Enqueue plugin JS
+            // Enqueue plugin JS  
+            $js_url = $this->plugin_url . 'assets/script.js';
             wp_enqueue_script(
                 'ac-wp-ham-menu-js',
-                $this->plugin_url . 'assets/script.js',
+                $js_url,
                 array('gsap'),
                 '1.0.0',
                 true
             );
+            
+            // Debug: Log asset URLs for troubleshooting
+            if (defined('WP_DEBUG') && WP_DEBUG) {
+                error_log('AC WP Ham Menu - CSS URL: ' . $css_url);
+                error_log('AC WP Ham Menu - JS URL: ' . $js_url);
+                error_log('AC WP Ham Menu - Plugin URL: ' . $this->plugin_url);
+            }
         }
     }
     
@@ -166,6 +152,9 @@ class AC_WP_Ham_Menu {
     }
     
     public function render_shortcode($atts) {
+        // Force enqueue assets when shortcode is used
+        $this->force_enqueue_assets();
+        
         $options = get_option('ac_wp_ham_menu_settings');
         $selected_menu = $options['selected_menu'] ?? '';
         
@@ -204,6 +193,61 @@ class AC_WP_Ham_Menu {
         </div>
         <?php
         return ob_get_clean();
+    }
+    
+    public function admin_notices() {
+        // Check if assets exist
+        $css_file = $this->plugin_path . 'assets/style.css';
+        $js_file = $this->plugin_path . 'assets/script.js';
+        
+        if (!file_exists($css_file) || !file_exists($js_file)) {
+            echo '<div class="notice notice-error"><p>';
+            echo '<strong>AC WP Hamburger Menu:</strong> Asset files missing! ';
+            if (!file_exists($css_file)) {
+                echo 'CSS not found at: ' . $css_file . ' ';
+            }
+            if (!file_exists($js_file)) {
+                echo 'JS not found at: ' . $js_file . ' ';
+            }
+            echo 'Please ensure the plugin files are properly uploaded.';
+            echo '</p></div>';
+        }
+    }
+    
+    private function force_enqueue_assets() {
+        // Force enqueue GSAP from CDN
+        if (!wp_script_is('gsap', 'enqueued')) {
+            wp_enqueue_script(
+                'gsap',
+                'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js',
+                array(),
+                '3.12.2',
+                true
+            );
+        }
+        
+        // Force enqueue plugin CSS
+        if (!wp_style_is('ac-wp-ham-menu-css', 'enqueued')) {
+            $css_url = $this->plugin_url . 'assets/style.css';
+            wp_enqueue_style(
+                'ac-wp-ham-menu-css',
+                $css_url,
+                array(),
+                '1.0.0'
+            );
+        }
+        
+        // Force enqueue plugin JS
+        if (!wp_script_is('ac-wp-ham-menu-js', 'enqueued')) {
+            $js_url = $this->plugin_url . 'assets/script.js';
+            wp_enqueue_script(
+                'ac-wp-ham-menu-js',
+                $js_url,
+                array('gsap'),
+                '1.0.0',
+                true
+            );
+        }
     }
 }
 
