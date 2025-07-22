@@ -56,24 +56,38 @@
                 this.toggleMenu();
             });
 
-            // Set up click outside handler - much simpler now
+            // Set up click outside handler - improved for WordPress nested menus
             this.documentClickHandler = (e) => {
                 if (!this.isOpen) return;
                 
+                console.log('🖱️ Document click detected, target:', e.target);
+                
                 // Close menu if clicking outside the container
                 if (!this.container.contains(e.target)) {
+                    console.log('🖱️ Click outside container - closing menu');
                     this.closeMenu();
                 } else {
-                    // Close menu if clicking on regular menu items (not submenu triggers)
+                    // Check if click is on a submenu trigger or submenu arrow
                     const clickedLink = e.target.closest('a');
-                    if (clickedLink) {
-                        const parentItem = clickedLink.closest('.menu-item');
-                        const isSubmenuTrigger = parentItem && parentItem.classList.contains('menu-item-has-children');
+                    const clickedArrow = e.target.closest('.ac-wp-ham-submenu-arrow');
+                    
+                    if (clickedLink || clickedArrow) {
+                        const parentItem = (clickedLink || clickedArrow).closest('.menu-item-has-children');
+                        const isSubmenuTrigger = !!parentItem;
                         
-                        // Close menu only if clicking regular menu items
+                        console.log('🖱️ Clicked link/arrow:', (clickedLink || clickedArrow).textContent.trim());
+                        console.log('🖱️ Is submenu trigger:', isSubmenuTrigger);
+                        console.log('🖱️ Parent item classes:', parentItem?.className || 'none');
+                        
+                        // Close menu only if clicking regular menu items (not submenu triggers)
                         if (!isSubmenuTrigger) {
+                            console.log('🖱️ Regular menu item clicked - closing menu');
                             this.closeMenu();
+                        } else {
+                            console.log('🖱️ Submenu trigger clicked - keeping menu open');
                         }
+                    } else {
+                        console.log('🖱️ Clicked something else in menu - keeping open');
                     }
                 }
             };
@@ -173,9 +187,17 @@
         }
 
         setupSubmenuHandling() {
-            // Find ALL submenu triggers at ANY depth (not just direct children)
-            const submenuTriggers = this.container.querySelectorAll('.menu-item-has-children a');
-            console.log('🔧 setupSubmenuHandling - Found triggers at ALL levels:', submenuTriggers.length);
+            // Find ALL submenu triggers - be more specific for WordPress
+            const submenuTriggers = this.container.querySelectorAll('.menu-item-has-children > a');
+            console.log('🔧 setupSubmenuHandling - Found WordPress triggers:', submenuTriggers.length);
+            
+            // Also find any nested submenu triggers
+            const nestedTriggers = this.container.querySelectorAll('.ac-wp-ham-submenu .menu-item-has-children > a');
+            console.log('🔧 setupSubmenuHandling - Found nested triggers:', nestedTriggers.length);
+            
+            // Combine all triggers
+            const allTriggers = [...submenuTriggers, ...nestedTriggers];
+            console.log('🔧 setupSubmenuHandling - Total triggers:', allTriggers.length);
             
             // ENSURE CLEAN INITIAL STATE - all submenus start hidden
             const allSubmenus = this.container.querySelectorAll('.ac-wp-ham-submenu');
@@ -185,39 +207,69 @@
             });
             console.log('🧹 Cleaned initial state for', allSubmenus.length, 'submenus');
             
-            submenuTriggers.forEach((trigger, index) => {
+            // Debug WordPress structure
+            this.debugWordPressStructure();
+            
+            allTriggers.forEach((trigger, index) => {
                 const parentItem = trigger.parentElement;
                 const submenu = parentItem.querySelector(':scope > .ac-wp-ham-submenu'); // Direct child submenu only
                 
                 console.log(`🔧 Trigger ${index}:`, trigger.textContent.trim(), 'has direct submenu:', !!submenu);
+                console.log(`🔧 Parent item classes:`, parentItem.className);
                 
                 if (submenu) {
                     const depth = this.getSubmenuDepth(parentItem);
-                    console.log(`🔍 Submenu depth: ${depth}, classes: "${submenu.className}", display: ${getComputedStyle(submenu).display}`);
+                    console.log(`🔍 Submenu depth: ${depth}, classes: "${submenu.className}"`);
                     
                     // Click to toggle submenu
                     trigger.addEventListener('click', (e) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        console.log('🖱️ SUBMENU TRIGGER CLICKED!', trigger.textContent.trim(), `(depth: ${depth})`);
+                        console.log('🖱️ WORDPRESS SUBMENU CLICKED!', trigger.textContent.trim(), `(depth: ${depth})`);
                         console.log('🖱️ Menu is open:', this.isOpen);
-                        console.log('🖱️ About to call toggleSubmenu...');
+                        console.log('🖱️ Parent item:', parentItem.className);
+                        console.log('🖱️ Submenu:', submenu.className);
                         this.toggleSubmenu(parentItem, submenu);
                     });
+                } else {
+                    console.log(`⚠️ No submenu found for trigger:`, trigger.textContent.trim());
                 }
             });
         }
         
         getSubmenuDepth(menuItem) {
             let depth = 0;
-            let current = menuItem;
+            let current = menuItem.parentElement; // Start from parent to avoid counting self
+            
             while (current && !current.classList.contains('ac-wp-ham-nav-list')) {
                 if (current.classList.contains('ac-wp-ham-submenu')) {
                     depth++;
                 }
                 current = current.parentElement;
             }
+            
+            console.log('📏 Calculated depth for', menuItem.querySelector('a')?.textContent.trim(), ':', depth);
             return depth;
+        }
+        
+        debugWordPressStructure() {
+            console.log('🔍 WordPress Menu Structure Debug:');
+            const allMenuItems = this.container.querySelectorAll('.menu-item');
+            allMenuItems.forEach((item, index) => {
+                const link = item.querySelector('a');
+                const submenu = item.querySelector(':scope > .ac-wp-ham-submenu');
+                const hasChildrenClass = item.classList.contains('menu-item-has-children');
+                const depth = this.getSubmenuDepth(item);
+                
+                console.log(`📋 Item ${index}:`, {
+                    text: link?.textContent.trim(),
+                    classes: item.className,
+                    hasChildrenClass,
+                    hasSubmenu: !!submenu,
+                    submenuClasses: submenu?.className,
+                    depth
+                });
+            });
         }
 
         toggleSubmenu(parentItem, submenu) {
