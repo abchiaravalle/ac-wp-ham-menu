@@ -173,8 +173,9 @@
         }
 
         setupSubmenuHandling() {
-            const submenuTriggers = this.container.querySelectorAll('.menu-item-has-children > a');
-            console.log('🔧 setupSubmenuHandling - Found triggers:', submenuTriggers.length);
+            // Find ALL submenu triggers at ANY depth (not just direct children)
+            const submenuTriggers = this.container.querySelectorAll('.menu-item-has-children a');
+            console.log('🔧 setupSubmenuHandling - Found triggers at ALL levels:', submenuTriggers.length);
             
             // ENSURE CLEAN INITIAL STATE - all submenus start hidden
             const allSubmenus = this.container.querySelectorAll('.ac-wp-ham-submenu');
@@ -186,36 +187,37 @@
             
             submenuTriggers.forEach((trigger, index) => {
                 const parentItem = trigger.parentElement;
-                const submenu = parentItem.querySelector('.ac-wp-ham-submenu');
+                const submenu = parentItem.querySelector(':scope > .ac-wp-ham-submenu'); // Direct child submenu only
                 
-                console.log(`🔧 Trigger ${index}:`, trigger.textContent.trim(), 'has submenu:', !!submenu);
+                console.log(`🔧 Trigger ${index}:`, trigger.textContent.trim(), 'has direct submenu:', !!submenu);
                 
                 if (submenu) {
-                    console.log(`🔍 Initial submenu state - classes: "${submenu.className}", display: ${getComputedStyle(submenu).display}`);
+                    const depth = this.getSubmenuDepth(parentItem);
+                    console.log(`🔍 Submenu depth: ${depth}, classes: "${submenu.className}", display: ${getComputedStyle(submenu).display}`);
+                    
                     // Click to toggle submenu
                     trigger.addEventListener('click', (e) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        console.log('🖱️ SUBMENU TRIGGER CLICKED!', trigger.textContent.trim());
+                        console.log('🖱️ SUBMENU TRIGGER CLICKED!', trigger.textContent.trim(), `(depth: ${depth})`);
                         console.log('🖱️ Menu is open:', this.isOpen);
                         console.log('🖱️ About to call toggleSubmenu...');
                         this.toggleSubmenu(parentItem, submenu);
                     });
-                    
-                    // DISABLED HOVER - was causing conflicts with click
-                    // parentItem.addEventListener('mouseenter', () => {
-                    //     if (this.isOpen) {
-                    //         this.showSubmenu(parentItem, submenu);
-                    //     }
-                    // });
-                    
-                    // parentItem.addEventListener('mouseleave', () => {
-                    //     if (this.isOpen) {
-                    //         this.hideSubmenu(parentItem, submenu);
-                    //     }
-                    // });
                 }
             });
+        }
+        
+        getSubmenuDepth(menuItem) {
+            let depth = 0;
+            let current = menuItem;
+            while (current && !current.classList.contains('ac-wp-ham-nav-list')) {
+                if (current.classList.contains('ac-wp-ham-submenu')) {
+                    depth++;
+                }
+                current = current.parentElement;
+            }
+            return depth;
         }
 
         toggleSubmenu(parentItem, submenu) {
@@ -285,14 +287,29 @@
             // Reset positioning classes
             submenu.classList.remove('ac-wp-ham-submenu-left');
             
-            // Get viewport dimensions
+            // Get viewport dimensions and submenu depth
             const viewportWidth = window.innerWidth;
-            const menuRect = this.menu.getBoundingClientRect();
-            const submenuWidth = 200; // Approximate submenu width
+            const depth = this.getSubmenuDepth(parentItem);
+            const submenuWidth = 220; // Approximate submenu width
+            
+            // For nested submenus, check positioning relative to the parent submenu
+            let referenceElement = this.menu;
+            if (depth > 0) {
+                // Find the parent submenu for positioning reference
+                referenceElement = parentItem.closest('.ac-wp-ham-submenu') || this.menu;
+            }
+            
+            const referenceRect = referenceElement.getBoundingClientRect();
             
             // Check if submenu would overflow right edge
-            if (menuRect.right + submenuWidth > viewportWidth - 20) {
+            // For nested submenus, we need to account for multiple levels of offset
+            const totalOffsetWidth = submenuWidth * (depth + 1);
+            
+            if (referenceRect.right + totalOffsetWidth > viewportWidth - 20) {
                 submenu.classList.add('ac-wp-ham-submenu-left');
+                console.log(`📍 Positioning submenu to LEFT (depth: ${depth}, would overflow)`);
+            } else {
+                console.log(`📍 Positioning submenu to RIGHT (depth: ${depth}, fits)`);
             }
         }
 
@@ -323,16 +340,23 @@
         }
 
         closeOtherSubmenus(exceptSubmenu) {
-            // Close all open submenus except the specified one
+            // Close sibling and unrelated submenus, but keep parent submenus open
             const openSubmenus = this.container.querySelectorAll('.ac-wp-ham-submenu-active');
             const isMobile = window.innerWidth <= 768;
             
             openSubmenus.forEach(submenu => {
                 if (submenu !== exceptSubmenu) {
-                    const parentItem = submenu.closest('.menu-item-has-children');
-                    if (parentItem) {
-                        console.log(`🔄 Closing other submenu (${isMobile ? 'mobile' : 'desktop'}):`, parentItem.querySelector('a').textContent.trim());
-                        this.hideSubmenu(parentItem, submenu);
+                    // Check if this submenu is a parent of the exceptSubmenu
+                    const isParentOfException = exceptSubmenu && submenu.contains(exceptSubmenu);
+                    
+                    if (!isParentOfException) {
+                        const parentItem = submenu.closest('.menu-item-has-children');
+                        if (parentItem) {
+                            console.log(`🔄 Closing other submenu (${isMobile ? 'mobile' : 'desktop'}):`, parentItem.querySelector('a').textContent.trim());
+                            this.hideSubmenu(parentItem, submenu);
+                        }
+                    } else {
+                        console.log(`🔄 Keeping parent submenu open:`, submenu.closest('.menu-item-has-children').querySelector('a').textContent.trim());
                     }
                 }
             });

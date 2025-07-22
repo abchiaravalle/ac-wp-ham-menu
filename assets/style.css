@@ -265,22 +265,47 @@
     border-bottom: none;
 }
 
-/* Nested submenu positioning */
+/* Nested submenu positioning - unlimited depth support */
 .ac-wp-ham-submenu .menu-item-has-children {
     position: relative;
     overflow: visible; /* Ensure nested submenus aren't clipped */
 }
 
+/* Level 1+ nested submenus - all positioned to the right by default */
 .ac-wp-ham-submenu .ac-wp-ham-submenu {
     top: 0;
     left: 100%;
+    margin-left: 5px; /* Slight gap between levels */
     overflow: visible; /* Ensure nested content is visible */
+    min-width: 200px; /* Slightly smaller for nested levels */
 }
 
+/* Left positioning for nested submenus when they would overflow */
 .ac-wp-ham-submenu .ac-wp-ham-submenu.ac-wp-ham-submenu-left {
     left: auto;
     right: 100%;
+    margin-left: 0;
+    margin-right: 5px;
     overflow: visible; /* Ensure nested content is visible */
+}
+
+/* Level 2+ nested submenus */
+.ac-wp-ham-submenu .ac-wp-ham-submenu .ac-wp-ham-submenu {
+    min-width: 180px; /* Even smaller for deeper nesting */
+    font-size: 14px; /* Slightly smaller text */
+}
+
+/* Level 3+ nested submenus */
+.ac-wp-ham-submenu .ac-wp-ham-submenu .ac-wp-ham-submenu .ac-wp-ham-submenu {
+    min-width: 160px; /* Smallest for deepest nesting */
+    font-size: 13px; /* Smallest text */
+}
+
+/* Ensure all nested levels maintain proper overflow */
+.ac-wp-ham-submenu .ac-wp-ham-submenu,
+.ac-wp-ham-submenu .ac-wp-ham-submenu .ac-wp-ham-submenu,
+.ac-wp-ham-submenu .ac-wp-ham-submenu .ac-wp-ham-submenu .ac-wp-ham-submenu {
+    overflow: visible !important;
 }
 
 /* Responsive Adjustments */
@@ -416,9 +441,9 @@
         background-color: rgba(85, 34, 221, 0.08) !important;
     }
     
-    /* Mobile: Nested submenus (level 1+) get more indentation */
+    /* Mobile: Progressive nesting support for unlimited depth */
     .ac-wp-ham-submenu .ac-wp-ham-submenu {
-        background: #f1f3f4 !important; /* Even lighter for nested */
+        background: #f1f3f4 !important; /* Level 1 nested */
         margin-left: 15px !important;
         margin-right: 15px !important;
         border-radius: 4px !important;
@@ -426,8 +451,32 @@
     }
     
     .ac-wp-ham-submenu .ac-wp-ham-submenu a {
-        padding: 8px 40px !important; /* Even more indentation for nested */
+        padding: 8px 40px !important; /* Level 1 nested indentation */
         font-size: 14px !important;
+    }
+    
+    /* Level 2+ nested submenus - even deeper nesting */
+    .ac-wp-ham-submenu .ac-wp-ham-submenu .ac-wp-ham-submenu {
+        background: #e8eaf0 !important; /* Level 2+ nested */
+        margin-left: 20px !important;
+        margin-right: 20px !important;
+    }
+    
+    .ac-wp-ham-submenu .ac-wp-ham-submenu .ac-wp-ham-submenu a {
+        padding: 6px 50px !important; /* Level 2+ nested indentation */
+        font-size: 13px !important;
+    }
+    
+    /* Level 3+ nested submenus */
+    .ac-wp-ham-submenu .ac-wp-ham-submenu .ac-wp-ham-submenu .ac-wp-ham-submenu {
+        background: #dde1e8 !important; /* Level 3+ nested */
+        margin-left: 25px !important;
+        margin-right: 25px !important;
+    }
+    
+    .ac-wp-ham-submenu .ac-wp-ham-submenu .ac-wp-ham-submenu .ac-wp-ham-submenu a {
+        padding: 4px 60px !important; /* Level 3+ nested indentation */
+        font-size: 12px !important;
     }
     
     /* Mobile: Remove left positioning classes - not needed */
