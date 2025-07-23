@@ -46,6 +46,14 @@
             this.setupKeyboardNavigation();
             this.setupSubmenuHandling();
             this.updateFocusableElements();
+            
+            // Ensure our GSAP context is isolated from other site GSAP usage
+            if (typeof gsap !== 'undefined') {
+                this.gsapContext = gsap.context(() => {}, this.container);
+                console.log('🎯 GSAP context isolated to plugin container');
+            }
+            
+            console.log('🚀 AC WP Hamburger Menu initialized with scoped styles');
         }
 
         setupEventListeners() {
@@ -276,20 +284,31 @@
         
         clearSubmenuTransforms() {
             // Clear any GSAP transforms that might interfere with submenu positioning
+            // ONLY target elements within our plugin container to avoid affecting other GSAP timelines
             const allSubmenus = this.container.querySelectorAll('.ac-wp-ham-submenu');
             allSubmenus.forEach(submenu => {
-                // Clear GSAP inline transforms
-                submenu.style.transform = '';
-                submenu.style.translate = '';
-                submenu.style.rotate = '';
-                submenu.style.scale = '';
+                // Only clear transforms if they appear to be GSAP-set (have data attributes or specific patterns)
+                if (submenu.hasAttribute('style') && submenu.style.transform) {
+                    // Check if this looks like a GSAP transform before clearing
+                    const currentTransform = submenu.style.transform;
+                    if (currentTransform.includes('translate') || currentTransform.includes('scale') || currentTransform.includes('rotate')) {
+                        submenu.style.transform = '';
+                        console.log('🧹 Cleared transform from submenu:', currentTransform);
+                    }
+                }
                 
-                // Clear any GSAP-set visibility/opacity that might conflict
-                if (submenu.style.opacity !== '' && submenu.style.opacity !== '0') {
+                // Clear GSAP-specific properties only if they exist
+                if (submenu.style.translate) submenu.style.translate = '';
+                if (submenu.style.rotate) submenu.style.rotate = '';
+                if (submenu.style.scale) submenu.style.scale = '';
+                
+                // Only clear opacity if it's not our intended 0 (hidden state)
+                if (submenu.style.opacity && submenu.style.opacity !== '0' && submenu.style.opacity !== '') {
                     submenu.style.opacity = '';
+                    console.log('🧹 Cleared opacity from submenu');
                 }
             });
-            console.log('🧹 Cleared GSAP transforms from', allSubmenus.length, 'submenus');
+            console.log('🧹 Safely cleared GSAP conflicts from', allSubmenus.length, 'submenus');
         }
         
         debugWordPressStructure() {
@@ -342,16 +361,21 @@
             // Animate submenu items after a tiny delay to ensure display is applied
             setTimeout(() => {
                 const submenuItems = submenu.querySelectorAll('li');
-                gsap.fromTo(submenuItems, {
-                    opacity: 0,
-                    x: 20
-                }, {
-                    duration: 0.3,
-                    opacity: 1,
-                    x: 0,
-                    stagger: 0.05,
-                    ease: "power2.out"
-                });
+                // Use scoped GSAP context to avoid conflicts with other site animations
+                if (this.gsapContext && typeof gsap !== 'undefined') {
+                    this.gsapContext.add(() => {
+                        gsap.fromTo(submenuItems, {
+                            opacity: 0,
+                            x: 20
+                        }, {
+                            duration: 0.3,
+                            opacity: 1,
+                            x: 0,
+                            stagger: 0.05,
+                            ease: "power2.out"
+                        });
+                    });
+                }
             }, 10);
         }
 
@@ -478,20 +502,24 @@
             // Add open class for CSS transitions
             this.menu.classList.add('ac-wp-ham-menu-open');
 
-            // Animate menu container
-            gsap.fromTo(this.menu, {
-                opacity: 0,
-                scale: 0.95,
-                y: -10,
-                rotationX: -10
-            }, {
-                duration: 0.4,
-                opacity: 1,
-                scale: 1,
-                y: 0,
-                rotationX: 0,
-                ease: "power2.out"
-            });
+            // Animate menu container with scoped GSAP context
+            if (this.gsapContext && typeof gsap !== 'undefined') {
+                this.gsapContext.add(() => {
+                    gsap.fromTo(this.menu, {
+                        opacity: 0,
+                        scale: 0.95,
+                        y: -10,
+                        rotationX: -10
+                    }, {
+                        duration: 0.4,
+                        opacity: 1,
+                        scale: 1,
+                        y: 0,
+                        rotationX: 0,
+                        ease: "power2.out"
+                    });
+                });
+            }
 
             // Animate menu items with stagger
             this.animateMenuItems('in');
@@ -509,58 +537,70 @@
 
             // Animate menu items out
             this.animateMenuItems('out', () => {
-                // Animate menu container out
-                gsap.to(this.menu, {
-                    duration: 0.3,
-                    opacity: 0,
-                    scale: 0.95,
-                    y: -10,
-                    rotationX: -10,
-                    ease: "power2.in",
-                    onComplete: () => {
-                        this.menu.classList.remove('ac-wp-ham-menu-open');
-                    }
-                });
+                // Animate menu container out with scoped GSAP context
+                if (this.gsapContext && typeof gsap !== 'undefined') {
+                    this.gsapContext.add(() => {
+                        gsap.to(this.menu, {
+                            duration: 0.3,
+                            opacity: 0,
+                            scale: 0.95,
+                            y: -10,
+                            rotationX: -10,
+                            ease: "power2.in",
+                            onComplete: () => {
+                                this.menu.classList.remove('ac-wp-ham-menu-open');
+                            }
+                        });
+                    });
+                }
             });
         }
 
         animateMenuItems(direction, callback) {
             const items = Array.from(this.menuItems);
             
-            if (direction === 'in') {
-                // Set initial states - all items come from the left
-                gsap.set(items, {
-                    opacity: 0,
-                    x: -30,
-                    rotationY: -15
-                });
+            // Use scoped GSAP context for all menu item animations
+            if (this.gsapContext && typeof gsap !== 'undefined') {
+                this.gsapContext.add(() => {
+                    if (direction === 'in') {
+                        // Set initial states - all items come from the left
+                        gsap.set(items, {
+                            opacity: 0,
+                            x: -30,
+                            rotationY: -15
+                        });
 
-                // Animate in with faster stagger
-                gsap.to(items, {
-                    duration: 0.4,
-                    opacity: 1,
-                    x: 0,
-                    rotationY: 0,
-                    ease: "power2.out",
-                    stagger: {
-                        amount: 0.1,
-                        from: "start"
+                        // Animate in with faster stagger
+                        gsap.to(items, {
+                            duration: 0.4,
+                            opacity: 1,
+                            x: 0,
+                            rotationY: 0,
+                            ease: "power2.out",
+                            stagger: {
+                                amount: 0.1,
+                                from: "start"
+                            }
+                        });
+                    } else {
+                        // Animate out with faster stagger - all items go to the left
+                        gsap.to(items, {
+                            duration: 0.25,
+                            opacity: 0,
+                            x: -20,
+                            rotationY: -10,
+                            ease: "power2.in",
+                            stagger: {
+                                amount: 0.05,
+                                from: "end"
+                            },
+                            onComplete: callback
+                        });
                     }
                 });
-            } else {
-                // Animate out with faster stagger - all items go to the left
-                gsap.to(items, {
-                    duration: 0.25,
-                    opacity: 0,
-                    x: -20,
-                    rotationY: -10,
-                    ease: "power2.in",
-                    stagger: {
-                        amount: 0.05,
-                        from: "end"
-                    },
-                    onComplete: callback
-                });
+            } else if (callback) {
+                // Fallback if GSAP is not available
+                callback();
             }
         }
 
