@@ -1,19 +1,10 @@
 /**
  * AC WP Hamburger Menu JavaScript
- * Uses GSAP for iOS-style animations and interactions
+ * Uses CSS transitions for smooth animations
  */
 
 (function() {
     'use strict';
-
-    // Wait for GSAP to be loaded
-    function initWhenReady() {
-        if (typeof gsap === 'undefined') {
-            setTimeout(initWhenReady, 50);
-            return;
-        }
-        initHamburgerMenus();
-    }
 
     function initHamburgerMenus() {
         const containers = document.querySelectorAll('.ac-wp-ham-container');
@@ -47,13 +38,7 @@
             this.setupSubmenuHandling();
             this.updateFocusableElements();
             
-            // Ensure our GSAP context is isolated from other site GSAP usage
-            if (typeof gsap !== 'undefined') {
-                this.gsapContext = gsap.context(() => {}, this.container);
-                console.log('🎯 GSAP context isolated to plugin container');
-            }
-            
-            console.log('🚀 AC WP Hamburger Menu initialized with scoped styles');
+            console.log('🚀 AC WP Hamburger Menu initialized with CSS animations');
         }
 
         setupEventListeners() {
@@ -225,9 +210,6 @@
             // Debug WordPress structure
             this.debugWordPressStructure();
             
-            // Clear any conflicting GSAP transforms on submenus
-            this.clearSubmenuTransforms();
-            
             allTriggers.forEach((trigger, index) => {
                 const parentItem = trigger.parentElement;
                 const submenu = parentItem.querySelector(':scope > .ac-wp-ham-submenu'); // Direct child submenu only
@@ -282,35 +264,6 @@
             return depth;
         }
         
-        clearSubmenuTransforms() {
-            // Clear any GSAP transforms that might interfere with submenu positioning
-            // ONLY target elements within our plugin container to avoid affecting other GSAP timelines
-            const allSubmenus = this.container.querySelectorAll('.ac-wp-ham-submenu');
-            allSubmenus.forEach(submenu => {
-                // Only clear transforms if they appear to be GSAP-set (have data attributes or specific patterns)
-                if (submenu.hasAttribute('style') && submenu.style.transform) {
-                    // Check if this looks like a GSAP transform before clearing
-                    const currentTransform = submenu.style.transform;
-                    if (currentTransform.includes('translate') || currentTransform.includes('scale') || currentTransform.includes('rotate')) {
-                        submenu.style.transform = '';
-                        console.log('🧹 Cleared transform from submenu:', currentTransform);
-                    }
-                }
-                
-                // Clear GSAP-specific properties only if they exist
-                if (submenu.style.translate) submenu.style.translate = '';
-                if (submenu.style.rotate) submenu.style.rotate = '';
-                if (submenu.style.scale) submenu.style.scale = '';
-                
-                // Only clear opacity if it's not our intended 0 (hidden state)
-                if (submenu.style.opacity && submenu.style.opacity !== '0' && submenu.style.opacity !== '') {
-                    submenu.style.opacity = '';
-                    console.log('🧹 Cleared opacity from submenu');
-                }
-            });
-            console.log('🧹 Safely cleared GSAP conflicts from', allSubmenus.length, 'submenus');
-        }
-        
         debugWordPressStructure() {
             console.log('🔍 WordPress Menu Structure Debug:');
             const allMenuItems = this.container.querySelectorAll('.menu-item');
@@ -351,40 +304,20 @@
             // Check if submenu would overflow viewport and position accordingly
             this.positionSubmenu(parentItem, submenu);
             
-            // Show submenu - SIMPLE APPROACH
+            // Show submenu with CSS animation
             parentItem.classList.add('ac-wp-ham-submenu-open');
             submenu.classList.add('ac-wp-ham-submenu-active');
             
             const isMobile = window.innerWidth <= 768;
-            console.log(`🎯 SIMPLE SHOW (${isMobile ? 'mobile inline' : 'desktop overlay'}) - Submenu display:`, getComputedStyle(submenu).display);
-            
-            // Animate submenu items after a tiny delay to ensure display is applied
-            setTimeout(() => {
-                const submenuItems = submenu.querySelectorAll('li');
-                // Use scoped GSAP context to avoid conflicts with other site animations
-                if (this.gsapContext && typeof gsap !== 'undefined') {
-                    this.gsapContext.add(() => {
-                        gsap.fromTo(submenuItems, {
-                            opacity: 0,
-                            x: 20
-                        }, {
-                            duration: 0.3,
-                            opacity: 1,
-                            x: 0,
-                            stagger: 0.05,
-                            ease: "power2.out"
-                        });
-                    });
-                }
-            }, 10);
+            console.log(`🎯 CSS SHOW (${isMobile ? 'mobile inline' : 'desktop overlay'}) - Submenu display:`, getComputedStyle(submenu).display);
         }
 
         hideSubmenu(parentItem, submenu) {
-            // Hide submenu - SIMPLE APPROACH
+            // Hide submenu with CSS animation
             parentItem.classList.remove('ac-wp-ham-submenu-open');
             submenu.classList.remove('ac-wp-ham-submenu-active');
             
-            console.log('🎯 SIMPLE HIDE - Submenu display:', getComputedStyle(submenu).display);
+            console.log('🎯 CSS HIDE - Submenu display:', getComputedStyle(submenu).display);
             
             // Also hide any nested submenus
             const nestedSubmenus = submenu.querySelectorAll('.ac-wp-ham-submenu');
@@ -501,28 +434,13 @@
             
             // Add open class for CSS transitions
             this.menu.classList.add('ac-wp-ham-menu-open');
-
-            // Animate menu container with scoped GSAP context
-            if (this.gsapContext && typeof gsap !== 'undefined') {
-                this.gsapContext.add(() => {
-                    gsap.fromTo(this.menu, {
-                        opacity: 0,
-                        scale: 0.95,
-                        y: -10,
-                        rotationX: -10
-                    }, {
-                        duration: 0.4,
-                        opacity: 1,
-                        scale: 1,
-                        y: 0,
-                        rotationX: 0,
-                        ease: "power2.out"
-                    });
-                });
-            }
-
-            // Animate menu items with stagger
-            this.animateMenuItems('in');
+            
+            // Add staggered animation class to menu items
+            this.menuItems.forEach((item, index) => {
+                setTimeout(() => {
+                    item.classList.add('ac-wp-ham-item-visible');
+                }, index * 50); // 50ms stagger
+            });
         }
 
         closeMenu() {
@@ -535,73 +453,15 @@
             // Close all open submenus
             this.closeAllSubmenus();
 
-            // Animate menu items out
-            this.animateMenuItems('out', () => {
-                // Animate menu container out with scoped GSAP context
-                if (this.gsapContext && typeof gsap !== 'undefined') {
-                    this.gsapContext.add(() => {
-                        gsap.to(this.menu, {
-                            duration: 0.3,
-                            opacity: 0,
-                            scale: 0.95,
-                            y: -10,
-                            rotationX: -10,
-                            ease: "power2.in",
-                            onComplete: () => {
-                                this.menu.classList.remove('ac-wp-ham-menu-open');
-                            }
-                        });
-                    });
-                }
+            // Remove animation classes from menu items
+            this.menuItems.forEach(item => {
+                item.classList.remove('ac-wp-ham-item-visible');
             });
-        }
 
-        animateMenuItems(direction, callback) {
-            const items = Array.from(this.menuItems);
-            
-            // Use scoped GSAP context for all menu item animations
-            if (this.gsapContext && typeof gsap !== 'undefined') {
-                this.gsapContext.add(() => {
-                    if (direction === 'in') {
-                        // Set initial states - all items come from the left
-                        gsap.set(items, {
-                            opacity: 0,
-                            x: -30,
-                            rotationY: -15
-                        });
-
-                        // Animate in with faster stagger
-                        gsap.to(items, {
-                            duration: 0.4,
-                            opacity: 1,
-                            x: 0,
-                            rotationY: 0,
-                            ease: "power2.out",
-                            stagger: {
-                                amount: 0.1,
-                                from: "start"
-                            }
-                        });
-                    } else {
-                        // Animate out with faster stagger - all items go to the left
-                        gsap.to(items, {
-                            duration: 0.25,
-                            opacity: 0,
-                            x: -20,
-                            rotationY: -10,
-                            ease: "power2.in",
-                            stagger: {
-                                amount: 0.05,
-                                from: "end"
-                            },
-                            onComplete: callback
-                        });
-                    }
-                });
-            } else if (callback) {
-                // Fallback if GSAP is not available
-                callback();
-            }
+            // Remove open class after a short delay to allow item animations
+            setTimeout(() => {
+                this.menu.classList.remove('ac-wp-ham-menu-open');
+            }, 200);
         }
 
         // Public method to close menu (useful for external scripts)
@@ -627,9 +487,9 @@
 
     // Initialize when DOM is ready
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initWhenReady);
+        document.addEventListener('DOMContentLoaded', initHamburgerMenus);
     } else {
-        initWhenReady();
+        initHamburgerMenus();
     }
 
     // Expose close method globally for external use

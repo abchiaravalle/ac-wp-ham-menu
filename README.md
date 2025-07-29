@@ -1,207 +1,231 @@
 # AC WP Hamburger Menu
 
-A WordPress plugin that creates beautiful, iOS-style floating hamburger menus with GSAP animations.
+A WordPress plugin that creates beautiful, iOS-style floating hamburger menus with smooth CSS animations.
 
 ## Features
 
-- **🎨 iOS-Style Design**: Modern, elegant floating menu with backdrop blur effects
-- **⚡ GSAP Animations**: Smooth, staggered animations with flip and slide effects
-- **📱 Responsive**: Works perfectly on desktop and mobile devices
-- **♿ Accessible**: Full keyboard navigation and ARIA attributes
-- **🎯 Smart Positioning**: Automatically adjusts position to stay within viewport
-- **🔧 WordPress Integration**: Uses native WordPress menus and walker
-- **🎛️ Admin Settings**: Easy configuration through WordPress admin
-- **🏗️ Theme Agnostic**: Works with any WordPress theme
+- **🎯 Floating Design**: Clean, modern hamburger menu that floats over your content
+- **⚡ CSS Animations**: Smooth, staggered animations with slide effects
+- **📱 Mobile Responsive**: Adaptive design that works perfectly on all devices
+- **♿ Accessible**: Full keyboard navigation and screen reader support
+- **🎨 Customizable**: Easy to style and integrate with any theme
+- **🔧 WordPress Integration**: Uses WordPress native menu system
+- **⚡ Lightweight**: Pure CSS animations for optimal performance
+- **🌐 Multi-level Support**: Unlimited nested submenu levels
+- **🎯 Smart Positioning**: Automatically adjusts position based on viewport
+
+## Quick Start
+
+1. **Install the Plugin**
+   ```bash
+   # Upload to /wp-content/plugins/ or install via WordPress admin
+   ```
+
+2. **Create a WordPress Menu**
+   - Go to Appearance → Menus
+   - Create or select a menu
+   - Add your menu items
+
+3. **Configure the Plugin**
+   - Go to Settings → AC WP Hamburger Menu
+   - Select your menu from the dropdown
+   - Save settings
+
+4. **Add to Your Site**
+   ```php
+   // Add anywhere in your theme
+   echo do_shortcode('[ac_wp_ham_menu]');
+   ```
 
 ## Installation
 
-1. Upload the `ac-wp-ham-menu` folder to your `/wp-content/plugins/` directory
-2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Go to **Settings > AC WP Hamburger Menu** to configure your menu
-4. Use the `[ac_wp_ham_menu]` shortcode where you want the menu to appear
+### Method 1: WordPress Admin
+1. Download the plugin ZIP file
+2. Go to Plugins → Add New → Upload Plugin
+3. Upload the ZIP file and activate
+
+### Method 2: Manual Installation
+1. Extract the plugin to `/wp-content/plugins/ac-wp-ham-menu/`
+2. Activate through the Plugins menu in WordPress
+
+### Method 3: Git Clone
+```bash
+cd /path/to/wordpress/wp-content/plugins/
+git clone https://github.com/yourusername/ac-wp-ham-menu.git
+```
 
 ## Usage
 
 ### Basic Usage
-
 ```php
+// Simple shortcode
 echo do_shortcode('[ac_wp_ham_menu]');
 ```
 
-### In Templates
-
+### Template Integration
 ```php
-<?php echo do_shortcode('[ac_wp_ham_menu]'); ?>
+// In your theme files
+if (function_exists('do_shortcode')) {
+    echo do_shortcode('[ac_wp_ham_menu]');
+}
 ```
 
-### In Gutenberg/Block Editor
-
-Simply add a Shortcode block and enter: `[ac_wp_ham_menu]`
+### Widget Areas
+You can also add the shortcode to any widget area that supports shortcodes.
 
 ## Configuration
 
-1. Navigate to **Settings > AC WP Hamburger Menu** in your WordPress admin
-2. Select which WordPress menu you want to display
-3. Save your settings
-4. The shortcode will now render your selected menu
+### Plugin Settings
+Navigate to **Settings → AC WP Hamburger Menu** to configure:
 
-**Note**: If no menu is selected, the shortcode will output nothing.
+- **Select Menu**: Choose which WordPress menu to display
+- The plugin will automatically handle the rest!
 
-## Features in Detail
-
-### Animations
-
-- **Menu Open/Close**: Subtle scale and fade with 3D rotation
-- **Menu Items**: Staggered slide-in from alternating sides (left/right)
-- **Submenus**: Smooth slide and flip transitions
-- **Hamburger Icon**: Morphs into X when menu is open
-
-### Accessibility
-
-- Full keyboard navigation with arrow keys
-- ESC key closes the menu
-- Proper ARIA attributes for screen readers
-- Focus management for better UX
-- High contrast mode support
-- Respects `prefers-reduced-motion` setting
-
-### Smart Positioning
-
-The menu automatically detects viewport edges and adjusts its position:
-- **Right Edge**: Menu opens to the left
-- **Bottom Edge**: Menu opens upward
-- **Corner Cases**: Handles both horizontal and vertical constraints
-
-### Responsive Design
-
-- Mobile-optimized sizing and spacing
-- Touch-friendly interactive elements
-- Viewport-aware maximum widths
-- Smooth scrolling for long menus
+### Menu Setup
+1. **Create Menu Items**: Go to Appearance → Menus
+2. **Add Items**: Pages, posts, custom links, categories, etc.
+3. **Nested Menus**: Drag items to create sub-menus (unlimited levels)
+4. **Save Menu**: Don't forget to save your menu structure
 
 ## Technical Details
 
 ### Dependencies
-
-- **GSAP**: Loaded from CDN (v3.12.2)
-- **WordPress**: Minimum version 5.0
-- **PHP**: Minimum version 7.4
-
-### Browser Support
-
-- Chrome 60+
-- Firefox 60+
-- Safari 12+
-- Edge 79+
+- **WordPress**: 5.0 or higher
+- **PHP**: 7.4 or higher
+- **CSS**: Modern browser support for CSS transitions
+- CDN-loaded CSS animations for better caching
 
 ### Performance
+- **Lightweight**: Minimal JavaScript footprint
+- **CSS-based**: Hardware-accelerated animations
+- **Optimized**: Smart loading and caching strategies
+- **Mobile-first**: Responsive design principles
 
-- Scripts only load when shortcode is present on the page
-- Lightweight CSS (~8KB)
-- Optimized JavaScript (~12KB)
-- CDN-loaded GSAP for better caching
+### Browser Support
+- ✅ Chrome 60+
+- ✅ Firefox 55+
+- ✅ Safari 12+
+- ✅ Edge 79+
+- ✅ iOS Safari 12+
+- ✅ Android Chrome 60+
 
-## Customization
+## Styling & Customization
 
-### CSS Classes
-
-All styles are prefixed with `ac-wp-ham-` to prevent conflicts:
-
-- `.ac-wp-ham-container` - Main wrapper
-- `.ac-wp-ham-toggle` - Hamburger button
-- `.ac-wp-ham-menu` - Menu container
-- `.ac-wp-ham-nav-list` - Navigation list
-- `.ac-wp-ham-submenu` - Submenu container
-
-### Custom Styling
-
-Add custom CSS to your theme to override default styles:
+### CSS Variables
+The plugin uses scoped CSS classes to prevent conflicts:
 
 ```css
+.ac-wp-ham-container {
+    /* Main container */
+}
+
 .ac-wp-ham-toggle {
-    background-color: #your-color !important;
+    /* Toggle button */
 }
 
 .ac-wp-ham-menu {
-    border-radius: 20px !important;
+    /* Menu dropdown */
+}
+
+.ac-wp-ham-nav-list {
+    /* Menu list */
+}
+
+.ac-wp-ham-submenu {
+    /* Submenu containers */
 }
 ```
 
-### JavaScript API
+### Custom Styling
+Add your custom CSS to override default styles:
 
-The plugin exposes a global object for external control:
+```css
+/* Example: Change menu colors */
+.ac-wp-ham-container .ac-wp-ham-menu {
+    background: #your-color;
+}
 
-```javascript
-// Close all open menus
-ACWPHamMenu.closeAll();
+.ac-wp-ham-container .ac-wp-ham-nav-list a {
+    color: #your-text-color;
+}
 ```
 
-## File Structure
+## Features in Detail
 
-```
-ac-wp-ham-menu/
-├── ac-wp-ham-menu.php    # Main plugin file
-├── assets/
-│   ├── style.css         # Plugin styles
-│   └── script.js         # Plugin JavaScript
-└── README.md             # This file
-```
+### Animations
+- **Menu Opening**: Smooth scale and fade animation
+- **Menu Items**: Staggered slide-in effects
+- **Submenus**: Smooth reveal with positioning
+- **Hover Effects**: Subtle interactive feedback
 
-## WordPress Integration
+### Accessibility
+- **Keyboard Navigation**: Full arrow key support
+- **Screen Readers**: Proper ARIA labels and roles
+- **Focus Management**: Logical tab order
+- **High Contrast**: Supports high contrast mode
 
-### Menu Walker
-
-The plugin uses a custom walker (`AC_WP_Ham_Menu_Walker`) that extends WordPress's native `Walker_Nav_Menu` to:
-- Add proper submenu classes
-- Include submenu arrows
-- Support nested menu structures
-- Maintain WordPress menu functionality
-
-### Settings API
-
-Uses WordPress Settings API for:
-- Proper option storage
-- Admin interface generation
-- Security and validation
-- Translation readiness
+### Mobile Experience
+- **Touch Friendly**: Large touch targets
+- **Responsive Design**: Adapts to all screen sizes
+- **Performance**: Optimized for mobile devices
+- **Native Feel**: iOS-style interactions
 
 ## Troubleshooting
 
-### Menu Not Appearing
+### Common Issues
 
-1. Check that a menu is selected in **Settings > AC WP Hamburger Menu**
-2. Verify the shortcode is correctly placed: `[ac_wp_ham_menu]`
-3. Ensure the selected menu has menu items
+**Menu not appearing?**
+1. Check that you've selected a menu in plugin settings
+2. Verify the shortcode is placed correctly
+3. Ensure the menu has items added to it
 
-### Animations Not Working
+**Styling conflicts?**
+1. All styles are scoped to prevent conflicts
+2. Check for theme CSS that might override
+3. Use browser dev tools to inspect elements
 
-1. Check browser console for JavaScript errors
-2. Verify GSAP is loading from CDN
-3. Ensure no other plugins are conflicting
+**JavaScript errors?**
+1. Check browser console for errors
+2. Verify WordPress and plugin are up to date
+3. Test with default theme to isolate conflicts
 
-### Styling Issues
+### Debug Mode
+Enable WordPress debug mode to see detailed error messages:
 
-1. Check for CSS conflicts with your theme
-2. Use browser developer tools to inspect elements
-3. Add `!important` to custom styles if needed
-
-## Support
-
-For support, please:
-1. Check this README for common solutions
-2. Review browser console for errors
-3. Test with default WordPress theme to isolate conflicts
+```php
+// In wp-config.php
+define('WP_DEBUG', true);
+define('WP_DEBUG_LOG', true);
+```
 
 ## Changelog
 
-### 1.0.0
-- Initial release
-- iOS-style floating menu design
-- GSAP animations with stagger effects
-- Full accessibility support
-- Viewport-aware positioning
-- WordPress admin integration
+### Version 1.0.0
+- ✅ Initial release
+- ✅ CSS-based animations
+- ✅ WordPress menu integration
+- ✅ Mobile responsive design
+- ✅ Accessibility features
+- ✅ Multi-level submenu support
+
+## Support
+
+- **Documentation**: Check this README for detailed information
+- **Issues**: Report bugs via GitHub issues
+- **WordPress**: Compatible with WordPress 5.0+
 
 ## License
 
-This plugin is released under the GPL v2 or later license.
+This project is licensed under the GPL v2 or later.
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test thoroughly
+5. Submit a pull request
+
+---
+
+**Made with ❤️ for the WordPress community**

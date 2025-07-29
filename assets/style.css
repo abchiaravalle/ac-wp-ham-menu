@@ -1,9 +1,9 @@
 /* ====================================================================
    AC WP HAMBURGER MENU - TIGHTLY SCOPED STYLES
-   Version: 2.0 - Critical Bug Fixes
+   Version: 2.0 - CSS Animations
    
    IMPORTANT: All styles are scoped to .ac-wp-ham-container to prevent
-   conflicts with other site elements and GSAP timelines.
+   conflicts with other site elements.
    ==================================================================== */
 
 /* ========================================
@@ -14,7 +14,6 @@
     position: relative;
     display: inline-block;
     z-index: 9999;
-    /* Removed global overflow: visible - only apply where needed */
 }
 
 .ac-wp-ham-container .ac-wp-ham-toggle {
@@ -120,8 +119,8 @@
     transform: translateY(-10px) scale(0.95);
     transform-origin: top left;
     z-index: 10000;
-    /* Controlled overflow for submenu visibility */
     overflow: visible;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .ac-wp-ham-container .ac-wp-ham-menu.ac-wp-ham-menu-open {
@@ -140,7 +139,6 @@
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
     position: relative;
-    /* CRITICAL: Allow submenus to extend outside - scoped to plugin only */
     overflow-x: visible;
 }
 
@@ -158,11 +156,19 @@
     margin: 0;
     padding: 0;
     position: relative;
+    opacity: 0;
+    transform: translateX(-30px);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* CSS Animation for menu items */
+.ac-wp-ham-container .ac-wp-ham-nav-list li.ac-wp-ham-item-visible {
+    opacity: 1;
+    transform: translateX(0);
 }
 
 .ac-wp-ham-container .ac-wp-ham-nav-list li.menu-item-has-children {
     position: relative;
-    /* Allow submenus to extend outside parent - scoped */
     overflow: visible;
 }
 
@@ -213,7 +219,7 @@
 }
 
 /* ========================================
-   SUBMENU STYLES - BULLETPROOF & SCOPED
+   SUBMENU STYLES - WITH CSS ANIMATIONS
    ======================================== */
 
 .ac-wp-ham-container .ac-wp-ham-submenu {
@@ -232,11 +238,16 @@
     z-index: 10001;
     /* DEFAULT STATE: COMPLETELY HIDDEN */
     display: none;
+    opacity: 0;
+    transform: translateY(-10px) scale(0.95);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* ACTIVE STATE: COMPLETELY VISIBLE - BULLETPROOF */
+/* ACTIVE STATE: COMPLETELY VISIBLE WITH ANIMATION */
 .ac-wp-ham-container .ac-wp-ham-submenu.ac-wp-ham-submenu-active {
     display: block !important;
+    opacity: 1;
+    transform: translateY(0) scale(1);
 }
 
 /* Position submenus to the left if they would overflow */
@@ -278,7 +289,6 @@
 
 .ac-wp-ham-container .ac-wp-ham-submenu .menu-item-has-children {
     position: relative;
-    /* Scoped overflow for nested submenus */
     overflow: visible;
 }
 
@@ -339,15 +349,6 @@
 }
 
 /* ========================================
-   GSAP ANIMATION STATES - SCOPED
-   ======================================== */
-
-.ac-wp-ham-container .ac-wp-ham-nav-list li {
-    opacity: 0;
-    transform: translateX(-30px);
-}
-
-/* ========================================
    MOBILE RESPONSIVE STYLES
    ======================================== */
 
@@ -379,6 +380,7 @@
         padding: 8px 0 !important;
         margin-top: 4px !important;
         margin-bottom: 4px !important;
+        transform: none !important;
     }
     
     .ac-wp-ham-container .ac-wp-ham-submenu a {
@@ -475,6 +477,7 @@
     .ac-wp-ham-container .ac-wp-ham-line,
     .ac-wp-ham-container .ac-wp-ham-menu,
     .ac-wp-ham-container .ac-wp-ham-nav-list a,
+    .ac-wp-ham-container .ac-wp-ham-nav-list li,
     .ac-wp-ham-container .ac-wp-ham-submenu-arrow,
     .ac-wp-ham-container .ac-wp-ham-submenu {
         transition: none !important;

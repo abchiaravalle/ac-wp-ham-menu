@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: AC WP Hamburger Menu
- * Description: A floating hamburger menu with iOS-style animations using GSAP
+ * Description: A floating hamburger menu with smooth CSS animations
  * Version: 1.0.0
  * Author: Your Name
  * Text Domain: ac-wp-ham-menu
@@ -53,15 +53,6 @@ class AC_WP_Ham_Menu {
         }
         
         if ($should_enqueue) {
-            // Enqueue GSAP from CDN
-            wp_enqueue_script(
-                'gsap',
-                'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js',
-                array(),
-                '3.12.2',
-                true
-            );
-            
             // Enqueue plugin CSS
             $css_url = $this->plugin_url . 'assets/style.css';
             wp_enqueue_style(
@@ -76,7 +67,7 @@ class AC_WP_Ham_Menu {
             wp_enqueue_script(
                 'ac-wp-ham-menu-js',
                 $js_url,
-                array('gsap'),
+                array(),
                 '1.0.0',
                 true
             );
@@ -215,17 +206,6 @@ class AC_WP_Ham_Menu {
     }
     
     private function force_enqueue_assets() {
-        // Force enqueue GSAP from CDN
-        if (!wp_script_is('gsap', 'enqueued')) {
-            wp_enqueue_script(
-                'gsap',
-                'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js',
-                array(),
-                '3.12.2',
-                true
-            );
-        }
-        
         // Force enqueue plugin CSS
         if (!wp_style_is('ac-wp-ham-menu-css', 'enqueued')) {
             $css_url = $this->plugin_url . 'assets/style.css';
@@ -243,7 +223,7 @@ class AC_WP_Ham_Menu {
             wp_enqueue_script(
                 'ac-wp-ham-menu-js',
                 $js_url,
-                array('gsap'),
+                array(),
                 '1.0.0',
                 true
             );
