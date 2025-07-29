@@ -74,9 +74,8 @@
                     console.log('🖱️ Is submenu trigger:', isSubmenuTrigger);
                     
                     // For WordPress menus, we need to check if the link has a real href
-                    const hasRealHref = clickedLink && clickedLink.hasAttribute('href') && 
-                                       clickedLink.getAttribute('href') !== '#' && 
-                                       clickedLink.getAttribute('href') !== '';
+                    const href = clickedLink ? clickedLink.getAttribute('href') : '';
+                    const hasRealHref = href && href !== '#' && href !== '';
                     
                     // Close menu only if:
                     // 1. Not a submenu trigger, OR
@@ -85,7 +84,7 @@
                         console.log('🖱️ Regular menu item or navigable submenu trigger - closing menu');
                         this.closeMenu();
                     } else {
-                        console.log('🖱️ Submenu trigger without href - keeping menu open');
+                        console.log('🖱️ Submenu trigger without real href - keeping menu open');
                     }
                 }
             };
@@ -224,22 +223,21 @@
                     // Click to toggle submenu - handle WordPress menu items
                     trigger.addEventListener('click', (e) => {
                         // Check if this link should navigate or toggle submenu
-                        const hasRealHref = trigger.hasAttribute('href') && 
-                                          trigger.getAttribute('href') !== '#' && 
-                                          trigger.getAttribute('href') !== '';
+                        const href = trigger.getAttribute('href');
+                        const hasRealHref = href && href !== '#' && href !== '';
                         
-                        if (!hasRealHref) {
-                            // No real href - prevent default and toggle submenu
+                        if (!hasRealHref || href === '#') {
+                            // No real href or # href - prevent default and toggle submenu
                             e.preventDefault();
                             e.stopPropagation();
-                            console.log('🖱️ WORDPRESS SUBMENU TOGGLE!', trigger.textContent.trim(), `(depth: ${depth})`);
+                            console.log('🖱️ SUBMENU TOGGLE!', trigger.textContent.trim(), `(depth: ${depth})`);
                             console.log('🖱️ Menu is open:', this.isOpen);
                             console.log('🖱️ Parent item:', parentItem.className);
                             console.log('🖱️ Submenu:', submenu.className);
                             this.toggleSubmenu(parentItem, submenu);
                         } else {
-                            console.log('🖱️ WORDPRESS SUBMENU WITH HREF - allowing navigation:', trigger.getAttribute('href'));
-                            // Let the link navigate normally, but also show submenu
+                            console.log('🖱️ SUBMENU WITH REAL HREF - allowing navigation:', href);
+                            // Let the link navigate normally
                             // Don't prevent default for navigation
                         }
                     });
